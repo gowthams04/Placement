@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PlaceMate: Placement Training Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f5fb;--card:#ffffff;--ink:#171b2d;--mut:#5d6883;--line:#e2e5f0;--brand:#4338ca;--brand-ink:#ffffff;--soft:#eceeff;--ok:#15803d;--okbg:#dcfce7;--bad:#b91c1c;--badbg:#fee2e2;--warn:#b45309;--code:#0f172a;--codeink:#e2e8f0;--shadow:0 1px 2px rgba(20,24,50,.06),0 6px 20px rgba(20,24,50,.05);
+ box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1120;--card:#171a2e;--ink:#e9ebf6;--mut:#9aa3bd;--line:#262b45;--brand:#818cf8;--brand-ink:#0e1120;--soft:#20244a;--ok:#4ade80;--okbg:#12301f;--bad:#f87171;--badbg:#3a1618;--warn:#fbbf24;--code:#0a0d1a;--shadow:none}}
+:root[data-theme="dark"]{--bg:#0e1120;--card:#171a2e;--ink:#e9ebf6;--mut:#9aa3bd;--line:#262b45;--brand:#818cf8;--brand-ink:#0e1120;--soft:#20244a;--ok:#4ade80;--okbg:#12301f;--bad:#f87171;--badbg:#3a1618;--warn:#fbbf24;--code:#0a0d1a;--shadow:none}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*:before,*:after{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:15px;line-height:1.55}
+h1{font-size:26px;margin:4px 0 6px;letter-spacing:-.02em}h2{font-size:19px;margin:24px 0 10px}h3{font-size:16px;margin:0 0 10px}h4{margin:14px 0 6px;color:var(--mut);font-size:13px;text-transform:uppercase;letter-spacing:.05em}
+p{margin:0 0 10px}small{display:block;color:var(--mut);font-size:12.5px}.muted{color:var(--mut)}.sub{color:var(--mut);margin-bottom:18px;max-width:70ch}
+a{color:var(--brand)}
+button{font:inherit;cursor:pointer;color:inherit}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;width:100%}
+input:focus,select:focus,textarea:focus,button:focus-visible{outline:2px solid var(--brand);outline-offset:1px}
+label{display:block;font-size:13px;font-weight:600;margin-bottom:12px}label input,label select,label textarea{margin-top:5px;font-weight:400}
+label.inl{display:flex;align-items:center;gap:10px}label.inl select{width:auto;margin:0}
+.btn{background:var(--brand);color:var(--brand-ink);border:0;border-radius:10px;padding:10px 16px;font-weight:600}
+.btn:hover{filter:brightness(1.08)}.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}.btn.sm{padding:6px 12px;font-size:13px}.btn.danger,.danger{color:var(--bad)}
+.link{background:none;border:0;color:var(--brand);font-weight:600;padding:8px 0 0}
+.back{background:none;border:0;color:var(--mut);padding:0 0 8px;font-weight:500}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;align-items:center}
+.between{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;display:flex;justify-content:space-between;align-items:center;padding:10px 20px;background:var(--card);border-bottom:1px solid var(--line)}
+.logo{font-weight:700;font-size:18px;letter-spacing:-.02em}.who{display:flex;gap:12px;align-items:center;font-size:13px;color:var(--mut)}
+.ghost{background:transparent;border:1px solid var(--line);border-radius:8px;padding:5px 10px}
+.app{display:grid;grid-template-columns:220px minmax(0,1fr);gap:0;max-width:1200px;margin:0 auto}
+.nav{position:sticky;top:calc(53px + env(safe-area-inset-top,0px));align-self:start;padding:16px 10px;display:flex;flex-direction:column;gap:2px}
+.nav button{display:flex;gap:10px;align-items:center;background:none;border:0;padding:10px 12px;border-radius:10px;text-align:left;font-weight:500;color:var(--mut)}
+.nav button:hover{background:var(--soft)}.nav button.on{background:var(--soft);color:var(--brand);font-weight:600}
+main{padding:22px 24px 90px;min-width:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:14px;box-shadow:var(--shadow)}
+.card.form{max-width:560px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}.grid3{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:16px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px}.stat b{font-size:26px;letter-spacing:-.02em;display:block}.stat span{color:var(--mut);font-size:13px;display:block;margin-bottom:8px}
+.bar{height:7px;border-radius:99px;background:var(--soft);overflow:hidden}.bar i{display:block;height:100%;background:var(--brand);border-radius:99px;transition:width .4s}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;cursor:pointer;display:flex;flex-direction:column;gap:2px;transition:transform .12s,border-color .12s}
+.tile:hover{transform:translateY(-2px);border-color:var(--brand)}.tile span{font-size:24px}
+.row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}.row:last-child{border-bottom:0}.row>div:first-child{flex:1;min-width:0}
+.card>.row:hover,.chrow:hover{background:var(--soft)}
+.chrow{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:8px;cursor:pointer}
+.num{width:30px;height:30px;border-radius:50%;background:var(--soft);color:var(--brand);display:grid;place-items:center;font-weight:700;font-size:13px;flex:none}
+.pill{display:inline-block;font-size:12px;font-weight:600;padding:3px 10px;border-radius:99px;background:var(--soft);color:var(--brand);white-space:nowrap}.pill.ok{background:var(--okbg);color:var(--ok)}.pill.bad{background:var(--badbg);color:var(--bad)}
+.tabs{display:flex;gap:4px;margin-bottom:16px;overflow-x:auto}.tabs button{background:none;border:0;padding:8px 14px;border-radius:10px;font-weight:600;color:var(--mut);white-space:nowrap}.tabs button.on{background:var(--soft);color:var(--brand)}
+.tabs.pills button{border:1px solid var(--line)}.tabs.pills button.on{border-color:var(--brand)}
+.books{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:18px}
+.book{cursor:pointer;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;transition:transform .12s}.book:hover{transform:translateY(-3px)}
+.cover,.cover-inline{background:linear-gradient(135deg,var(--bk),color-mix(in srgb,var(--bk) 55%,#000));color:#fff}
+.cover{padding:22px 20px 18px 34px;min-height:190px;position:relative;display:flex;flex-direction:column}
+.spine{position:absolute;left:0;top:0;bottom:0;width:16px;background:rgba(0,0,0,.28)}
+.bt{font-size:21px;font-weight:700;line-height:1.2;letter-spacing:-.02em}.bs{font-size:13px;opacity:.85;margin-top:6px}.bp{margin-top:auto;padding-top:16px;font-size:13px}.bp .bar{background:rgba(255,255,255,.3);margin-bottom:6px}
+.bm{padding:10px 14px;font-size:12.5px;color:var(--mut)}
+.cover-inline{border-radius:14px;padding:16px 18px;margin-bottom:14px}.cover-inline small{color:rgba(255,255,255,.85)}.cover-inline .bar{background:rgba(255,255,255,.3);margin-top:10px}
+.fl{margin:0;padding-left:20px}.fl li{margin:5px 0}.example{border-left:4px solid var(--brand)}.example ol{margin:6px 0 0;padding-left:20px}
+.q{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:12px}
+.qt{font-weight:600;margin-bottom:10px}.qt span{display:inline-block;background:var(--soft);color:var(--brand);border-radius:6px;padding:1px 8px;margin-right:8px;font-size:12px}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px}
+.opt{text-align:left;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+button.opt:hover:not(:disabled){border-color:var(--brand);background:var(--soft)}
+.opt.sel{border-color:var(--brand);background:var(--soft);font-weight:600}.opt.right{border-color:var(--ok);background:var(--okbg);color:var(--ok);font-weight:600}.opt.wrong{border-color:var(--bad);background:var(--badbg);color:var(--bad)}
+.opt:disabled{cursor:default;color:inherit}.opt.right:disabled{color:var(--ok)}.opt.wrong:disabled{color:var(--bad)}
+.expl{margin-top:10px;padding:10px 12px;border-radius:10px;background:var(--soft);font-size:14px}.expl.ok{background:var(--okbg)}.expl.bad{background:var(--badbg)}
+.scorebox{background:var(--soft);border-radius:14px;padding:16px 18px;margin:16px 0}.scorebox.big{text-align:center;padding:26px}.scorebox.big b{font-size:44px;display:block;letter-spacing:-.03em}
+details{border-bottom:1px solid var(--line);padding:2px 0}details:last-child{border-bottom:0}summary{cursor:pointer;padding:10px 0;font-weight:600}details p{color:var(--mut);padding:0 0 10px 4px}
+details.card{padding:10px 16px}details.card summary{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.chk{display:flex;gap:10px;align-items:flex-start;font-weight:400;margin:0;padding:8px 0;border-top:1px solid var(--line)}.chk input{width:auto;margin:3px 0 0}
+.codebox{font-family:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;font-size:13px;line-height:1.5;min-height:200px;background:var(--code);color:var(--codeink);border-color:var(--code);tab-size:2;resize:vertical}
+.codeshow{background:var(--code);color:var(--codeink);border-radius:10px;padding:14px;overflow-x:auto;font-family:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;font-size:13px;margin:8px 0}
+.tests{margin-top:12px;display:grid;gap:6px}.trow{display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding:8px 12px;border-radius:10px;font-size:13px}.trow.ok{background:var(--okbg)}.trow.bad{background:var(--badbg)}.trow code{font-family:'JetBrains Mono',monospace;font-size:12px;overflow-wrap:anywhere}
+.testbar{position:sticky;top:calc(53px + env(safe-area-inset-top,0px));z-index:10;display:flex;justify-content:space-between;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 16px;margin-bottom:14px}
+.timer{font-size:24px;font-weight:700;font-variant-numeric:tabular-nums}.timer.low{color:var(--bad)}
+.tbl{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:14px;margin-bottom:14px}table{border-collapse:collapse;width:100%;font-size:14px}th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--line);white-space:nowrap}th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--mut)}tr:last-child td{border-bottom:0}tr.clk{cursor:pointer}tr.clk:hover{background:var(--soft)}
+.mini{display:flex;align-items:center;gap:8px;min-width:120px}.mini .bar{flex:1}.mini span{font-size:12px;width:34px}
+.search{max-width:360px;margin-bottom:12px}
+.chat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;height:min(52vh,460px);overflow-y:auto;display:flex;flex-direction:column;gap:10px}
+.bub{max-width:82%;padding:10px 14px;border-radius:14px;font-size:14.5px}.bub small{margin-bottom:2px;font-weight:600}.bub.ai{background:var(--soft);align-self:flex-start}.bub.me{background:var(--brand);color:var(--brand-ink);align-self:flex-end}.bub.me small{color:inherit;opacity:.8}
+.ans{margin-top:12px}.dots{color:var(--mut);animation:pulse 1.2s infinite}@keyframes pulse{50%{opacity:.4}}
+.login{min-height:100vh;display:grid;grid-template-columns:1.1fr 1fr}
+.hero{background:linear-gradient(150deg,#312e81,#4338ca 55%,#6d28d9);color:#fff;padding:48px;display:flex;flex-direction:column;justify-content:center;gap:16px}
+.hero h1{font-size:38px;line-height:1.1;margin:0}.hero p{opacity:.9;max-width:46ch}.hero ul{list-style:none;padding:0;margin:8px 0;display:grid;gap:8px}.hero .logo{font-size:20px}
+.modebadge{margin-top:12px;font-size:12.5px;background:rgba(255,255,255,.14);padding:6px 12px;border-radius:99px;align-self:flex-start}.modebadge.live{background:rgba(74,222,128,.22)}
+.panel{padding:48px;display:flex;flex-direction:column;justify-content:center;max-width:460px;width:100%;margin:0 auto}
+.panel .btn{width:100%;margin-top:6px}.panel .tabs{border-bottom:1px solid var(--line);margin-bottom:22px}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,30px);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:99px;font-size:14px;opacity:0;pointer-events:none;transition:.25s;z-index:60;max-width:90vw;text-align:center}#toast.show{opacity:1;transform:translate(-50%,0)}
+.fab{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));width:52px;height:52px;border-radius:50%;border:0;background:var(--brand);color:var(--brand-ink);font-size:22px;box-shadow:0 6px 18px rgba(0,0,0,.25);z-index:40}
+.calc{position:fixed;right:16px;bottom:calc(78px + env(safe-area-inset-bottom,0px));width:240px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px;box-shadow:0 12px 32px rgba(0,0,0,.25);z-index:40}
+.calc input{text-align:right;font-size:20px;font-family:'JetBrains Mono',monospace;margin-bottom:8px}.ckeys{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.ckeys button{padding:10px 0;border-radius:8px;border:1px solid var(--line);background:var(--card);font-weight:600}.ckeys .eq{grid-column:span 4;background:var(--brand);color:var(--brand-ink);border:0}
+@media(max-width:860px){
+ .login{grid-template-columns:1fr}.hero{padding:28px 22px}.hero h1{font-size:28px}.panel{padding:28px 22px}
+ .app{grid-template-columns:1fr}.nav{position:sticky;top:calc(53px + env(safe-area-inset-top,0px));z-index:15;flex-direction:row;overflow-x:auto;padding:8px 10px;background:var(--bg);border-bottom:1px solid var(--line)}.nav button{white-space:nowrap;padding:8px 12px}
+ main{padding:16px 14px 90px}.top{padding:10px 14px}.who span{display:none}.testbar{top:calc(103px + env(safe-area-inset-top,0px))}h1{font-size:22px}
+}
+</style>
+</head>
+<body>
+<div id="app"><div style="padding:40px;text-align:center;color:var(--mut)">Loading PlaceMate…</div></div>
+<div id="toast" role="status"></div>
+<button id="calcBtn" class="fab" hidden onclick="toggleCalc()" aria-label="Calculator">🧮</button>
+<div id="calc" class="calc" hidden><input id="cdisp" aria-label="Calculator display" autocomplete="off" inputmode="decimal"><div class="ckeys" id="ckeys"></div></div>
+<script>
+/* ============ CONTENT ============ */
+const BOOKS=[
+{id:'quant',title:'Quantitative Aptitude',short:'Quant',sub:'Percentages, profit & loss, time & work, interest and more',color:'#4338ca',chapters:[
+{id:'q1',title:'Percentages',intro:"'Per cent' means 'per hundred'. Profit, interest and data questions are all percentages in disguise, so master this first.",
+formulas:["x% of y = (x × y) / 100","Percentage change = (Change ÷ Original) × 100","Successive changes of a% and b% = a + b + (ab/100)%","Quick fractions: 1/2 = 50%, 1/3 = 33.33%, 1/4 = 25%, 1/5 = 20%, 1/8 = 12.5%"],
+ex:{q:"A shirt's price rises from ₹400 to ₹500. What is the percentage increase?",s:["Change = 500 − 400 = 100","Percentage = (100 ÷ 400) × 100","= 25%"]},
+qs:[
+{q:"What is 15% of 240?",o:["24","30","36","42"],a:2,e:"240 × 15 / 100 = 36."},
+{q:"A number increased by 25% becomes 150. What is the original number?",o:["100","110","120","125"],a:2,e:"x × 1.25 = 150, so x = 150 / 1.25 = 120."},
+{q:"A price is increased by 10% and then by 20%. What is the net increase?",o:["30%","32%","35%","28%"],a:1,e:"a + b + ab/100 = 10 + 20 + (10×20)/100 = 32%."},
+{q:"In an exam, 40% of 500 students failed. How many passed?",o:["200","250","300","350"],a:2,e:"Passed = 60% of 500 = 300."}]},
+{id:'q2',title:'Profit & Loss',intro:"Profit and loss are always calculated on the cost price unless the question says otherwise. Discount is always on the marked price.",
+formulas:["Profit = SP − CP; Loss = CP − SP","Profit % = (Profit ÷ CP) × 100","SP = CP × (100 + P%) / 100 (use minus for loss)","SP = MP × (100 − Discount%) / 100"],
+ex:{q:"A bag costing ₹800 is sold for ₹1,000. Find the profit %.",s:["Profit = 1000 − 800 = 200","Profit % = (200 ÷ 800) × 100","= 25%"]},
+qs:[
+{q:"CP = ₹500 and SP = ₹600. What is the profit %?",o:["15%","20%","25%","10%"],a:1,e:"Profit = 100; (100/500)×100 = 20%."},
+{q:"An article is sold at a 10% loss for ₹450. What is its cost price?",o:["₹480","₹500","₹495","₹520"],a:1,e:"SP = 0.9 × CP, so CP = 450 / 0.9 = ₹500."},
+{q:"Marked price is ₹800 with a 15% discount. What is the selling price?",o:["₹660","₹680","₹700","₹720"],a:1,e:"SP = 800 × 85/100 = ₹680."},
+{q:"The cost price of 12 articles equals the selling price of 10 articles. What is the profit %?",o:["10%","15%","20%","25%"],a:2,e:"Let CP of each = 1. SP of 10 = 12, so SP each = 1.2. Profit = 20%."}]},
+{id:'q3',title:'Ratio & Proportion',intro:"A ratio compares two quantities. Always convert the ratio into 'parts' and find the value of one part.",
+formulas:["a : b = a / b","Share of a in ratio a:b of total T = T × a / (a + b)","If a : b = c : d then a × d = b × c","Sum of parts = a + b"],
+ex:{q:"Divide ₹900 in the ratio 2 : 7.",s:["Total parts = 2 + 7 = 9","One part = 900 / 9 = 100","Shares = 200 and 700"]},
+qs:[
+{q:"Divide ₹1200 in the ratio 3 : 5. What is the larger share?",o:["₹450","₹600","₹750","₹800"],a:2,e:"Larger share = 1200 × 5/8 = ₹750."},
+{q:"If 3 : x = 9 : 15, find x.",o:["4","5","6","7"],a:1,e:"3 × 15 = 9 × x, so x = 45 / 9 = 5."},
+{q:"The ages of A and B are in the ratio 4 : 5 and their sum is 45. What is A's age?",o:["18","20","24","25"],a:1,e:"A = 45 × 4/9 = 20."},
+{q:"Two numbers are in the ratio 2 : 3 and the sum of their squares is 468. Find the larger number.",o:["12","15","18","21"],a:2,e:"(2k)² + (3k)² = 13k² = 468, so k² = 36 and k = 6. Larger = 3k = 18."}]},
+{id:'q4',title:'Time & Work',intro:"Treat total work as 1 unit (or as the LCM of the days) and think in terms of work done per day.",
+formulas:["Rate = 1 / days","Together: T = (A × B) / (A + B)","LCM method: total work = LCM of days","Man-days: M₁ × D₁ = M₂ × D₂"],
+ex:{q:"A can finish a job in 12 days and B in 6 days. How long together?",s:["Total work = LCM(12, 6) = 12 units","A does 1 unit/day, B does 2 units/day, together 3 units/day","Time = 12 / 3 = 4 days"]},
+qs:[
+{q:"A can do a work in 10 days and B in 15 days. Working together, how many days do they need?",o:["5","6","7","8"],a:1,e:"LCM = 30 units. A = 3/day, B = 2/day, together 5/day, so 30/5 = 6 days."},
+{q:"A does 1/3 of a work in 5 days. How many days for the whole work?",o:["10","12","15","18"],a:2,e:"Whole work = 5 × 3 = 15 days."},
+{q:"8 men finish a job in 12 days. How many days will 6 men need?",o:["14","16","18","20"],a:1,e:"Man-days = 96. 96 / 6 = 16 days."},
+{q:"A alone takes 12 days and B alone 24 days. They work together for 4 days, then A leaves. How many more days does B need to finish?",o:["8","10","12","14"],a:2,e:"Together rate = 1/12 + 1/24 = 1/8 per day. In 4 days half is done. B does the other half in 12 days (1/24 per day)."}]},
+{id:'q5',title:'Time, Speed & Distance',intro:"Keep units consistent. Convert km/h to m/s by multiplying by 5/18 whenever a train's length in metres is involved.",
+formulas:["Speed = Distance / Time","km/h → m/s: × 5/18; m/s → km/h: × 18/5","Average speed (equal distances) = 2xy / (x + y)","Trains in opposite directions: relative speed = sum; same direction = difference","Time to cross a pole = length / speed"],
+ex:{q:"A car covers 150 km in 3 hours. Find its speed in m/s.",s:["Speed = 150 / 3 = 50 km/h","In m/s = 50 × 5/18","≈ 13.9 m/s"]},
+qs:[
+{q:"Convert 72 km/h to m/s.",o:["15","18","20","25"],a:2,e:"72 × 5/18 = 20 m/s."},
+{q:"A car goes 60 km at 30 km/h and returns the same 60 km at 60 km/h. What is the average speed?",o:["40 km/h","45 km/h","48 km/h","50 km/h"],a:0,e:"2xy/(x+y) = 2×30×60/90 = 40 km/h."},
+{q:"A 150 m long train running at 54 km/h crosses a pole. How long does it take?",o:["8 s","10 s","12 s","15 s"],a:1,e:"54 km/h = 15 m/s. Time = 150/15 = 10 s."},
+{q:"Two trains of length 100 m and 150 m run in opposite directions at 36 km/h and 54 km/h. How long do they take to cross each other?",o:["8 s","10 s","12 s","15 s"],a:1,e:"Relative speed = 90 km/h = 25 m/s. Distance = 250 m. Time = 250/25 = 10 s."}]},
+{id:'q6',title:'Simple & Compound Interest',intro:"Simple interest grows the same amount every year; compound interest earns interest on interest.",
+formulas:["SI = (P × R × T) / 100","Amount = P + SI","CI amount = P (1 + R/100)ⁿ","CI − SI for 2 years = P (R/100)²"],
+ex:{q:"Find the SI on ₹5000 at 6% p.a. for 2 years.",s:["SI = (5000 × 6 × 2) / 100","= ₹600"]},
+qs:[
+{q:"Find the SI on ₹2000 at 5% for 3 years.",o:["₹250","₹300","₹350","₹400"],a:1,e:"2000 × 5 × 3 / 100 = ₹300."},
+{q:"Find the CI on ₹1000 at 10% p.a. for 2 years.",o:["₹200","₹210","₹220","₹121"],a:1,e:"Amount = 1000 × 1.1 × 1.1 = 1210. CI = 1210 − 1000 = ₹210."},
+{q:"A sum doubles itself in 5 years at simple interest. What is the rate?",o:["15%","20%","25%","10%"],a:1,e:"SI = P, so P = P × R × 5 / 100, giving R = 20%."},
+{q:"Find CI − SI for 2 years on ₹5000 at 8% p.a.",o:["₹16","₹32","₹40","₹64"],a:1,e:"P (R/100)² = 5000 × 0.0064 = ₹32."}]},
+{id:'q7',title:'Averages',intro:"Average = sum ÷ count. Most problems become easy when you work with totals instead of averages.",
+formulas:["Average = Sum / n","Sum = Average × n","New average after adding x = (old sum + x) / (n + 1)","Average of an AP = (first + last) / 2"],
+ex:{q:"Find the average of 3, 5 and 10.",s:["Sum = 18","Average = 18 / 3 = 6"]},
+qs:[
+{q:"The average of 5 numbers is 20. What is their sum?",o:["80","90","100","120"],a:2,e:"Sum = 20 × 5 = 100."},
+{q:"The average of 4 numbers is 15. A fifth number, 25, is added. What is the new average?",o:["16","17","18","19"],a:1,e:"Old sum = 60. New sum = 85. 85 / 5 = 17."},
+{q:"The average age of 10 students is 15. Including the teacher, the average becomes 16. Find the teacher's age.",o:["24","26","28","30"],a:1,e:"11 × 16 = 176 and 10 × 15 = 150. Teacher = 176 − 150 = 26."},
+{q:"What is the average of the first 5 positive multiples of 4?",o:["10","12","14","16"],a:1,e:"4, 8, 12, 16, 20 → (4 + 20)/2 = 12."}]},
+{id:'q8',title:'Permutations, Combinations & Probability',intro:"Use permutations when order matters (arrangements) and combinations when it doesn't (selections). Probability = favourable ÷ total.",
+formulas:["n! = n × (n−1) × … × 1","ⁿPᵣ = n! / (n − r)!","ⁿCᵣ = n! / (r! (n − r)!)","P(E) = favourable outcomes / total outcomes","P(at least one) = 1 − P(none)"],
+ex:{q:"In how many ways can 2 students be chosen from 4?",s:["Order doesn't matter, so use ⁴C₂","= (4 × 3) / (2 × 1)","= 6"]},
+qs:[
+{q:"In how many ways can 4 people be arranged in a row?",o:["12","16","24","48"],a:2,e:"4! = 24."},
+{q:"What is ⁵C₂?",o:["5","10","15","20"],a:1,e:"(5 × 4)/(2 × 1) = 10."},
+{q:"A fair die is rolled. What is the probability of getting an even number?",o:["1/6","1/3","1/2","2/3"],a:2,e:"Even = {2, 4, 6}, so 3/6 = 1/2."},
+{q:"Two coins are tossed. What is the probability of at least one head?",o:["1/4","1/2","3/4","1"],a:2,e:"1 − P(no head) = 1 − 1/4 = 3/4."}]}
+]},
+{id:'logic',title:'Logical Reasoning',short:'Logical',sub:'Series, coding-decoding, blood relations, directions',color:'#0f766e',chapters:[
+{id:'l1',title:'Number & Letter Series',intro:"Look at the gaps between terms first. If the gaps don't help, test squares, cubes, multiplication or alternating patterns.",
+formulas:["Second-level differences: +2, +4, +6, …","Multiplying patterns: ×2, ×3, …","Squares: 1, 4, 9, 16, 25 · Cubes: 1, 8, 27, 64","Alphabet positions: A = 1 … Z = 26"],
+ex:{q:"5, 8, 11, 14, ?",s:["Differences are 3, 3, 3","Next term = 14 + 3 = 17"]},
+qs:[
+{q:"2, 6, 12, 20, 30, ?",o:["40","42","44","46"],a:1,e:"Differences are 4, 6, 8, 10, so the next is +12: 42."},
+{q:"3, 6, 12, 24, ?",o:["36","42","48","54"],a:2,e:"Each term is doubled: 24 × 2 = 48."},
+{q:"A, C, F, J, ?",o:["N","O","P","Q"],a:1,e:"Positions 1, 3, 6, 10 add +2, +3, +4, so the next adds +5: 15 = O."}]},
+{id:'l2',title:'Coding & Decoding',intro:"Find the rule that changes each letter (shift, reverse, position value) and apply it to the new word.",
+formulas:["Shift code: each letter moves +k or −k","Reverse code: word written backwards","Position code: A = 1, B = 2, …"],
+ex:{q:"If CAT is written as DBU, how is DOG written?",s:["Each letter moves +1","D→E, O→P, G→H","DOG = EPH"]},
+qs:[
+{q:"If CAT is coded as ECV, how is DOG coded?",o:["FQI","EPH","FPI","GQJ"],a:0,e:"Each letter is shifted by +2: D→F, O→Q, G→I."},
+{q:"If MANGO is written as NBOHP, how is APPLE written?",o:["BQQMF","BPQMF","CQQMF","BQQNF"],a:0,e:"Each letter is shifted by +1: A→B, P→Q, P→Q, L→M, E→F."},
+{q:"If TABLE is coded as ELBAT, how is CHAIR coded?",o:["RIAHC","RIHAC","CHAIR","RAICH"],a:0,e:"The word is simply reversed."}]},
+{id:'l3',title:'Blood Relations',intro:"Draw a small family tree with ♂ and ♀ and move one step at a time from the given person.",
+formulas:["Mother's brother = maternal uncle","Father's father = paternal grandfather","Uncle's or aunt's child = cousin","Sibling's son = nephew; sibling's daughter = niece"],
+ex:{q:"Pointing to a girl, Ravi says 'She is my mother's only daughter.' How is she related to Ravi?",s:["Ravi's mother's daughter","A daughter of the same mother is Ravi's sister"]},
+qs:[
+{q:"Pointing to a man, a woman says, 'He is the son of my mother's only brother.' How is the man related to the woman?",o:["Brother","Cousin","Uncle","Nephew"],a:1,e:"Mother's brother's son is a maternal cousin."},
+{q:"A is B's sister. C is B's mother. D is C's father. E is D's mother. How is A related to D?",o:["Grandmother","Daughter","Granddaughter","Grandfather"],a:2,e:"C is A's mother, and D is C's father. So D is A's grandfather and A is D's granddaughter."},
+{q:"Ravi's father is Suresh's son. How is Suresh related to Ravi?",o:["Father","Grandfather","Uncle","Brother"],a:1,e:"Suresh is the father of Ravi's father, which makes him Ravi's grandfather."}]},
+{id:'l4',title:'Directions & Ranking',intro:"Sketch the path with N at the top and E on the right. Use Pythagoras when the final displacement is diagonal.",
+formulas:["Turning right from North → East; left → West","Displacement = straight-line distance from start","Rank from right = Total − Rank from left + 1","Common triples: 3-4-5, 5-12-13"],
+ex:{q:"Walk 3 km north then 4 km east. How far are you from the start?",s:["Right triangle with sides 3 and 4","Distance = √(9 + 16) = 5 km"]},
+qs:[
+{q:"Ram walks 5 km north, then 3 km east, then 5 km south. How far is he from the start?",o:["3 km","5 km","8 km","13 km"],a:0,e:"The north and south legs cancel, leaving 3 km east."},
+{q:"In a row of 30 students, Arun is 12th from the left. What is his position from the right?",o:["18","19","20","17"],a:1,e:"30 − 12 + 1 = 19."},
+{q:"You face North, turn right, then turn right again. Which direction are you facing?",o:["East","West","South","North"],a:2,e:"North → East → South."}]}
+]},
+{id:'verbal',title:'Verbal Ability',short:'Verbal',sub:'Grammar rules and vocabulary for placement tests',color:'#b45309',chapters:[
+{id:'v1',title:'Grammar & Sentence Correction',intro:"Most errors come from subject-verb agreement, tenses and articles. Read the sentence aloud and listen for what sounds off.",
+formulas:["Each / every / one of + singular verb","'Since' + point in time; 'for' + duration","'a' before consonant sounds; 'an' before vowel sounds","Present perfect = has/have + past participle"],
+ex:{q:"Correct: 'She go to school daily.'",s:["Subject 'She' is singular","Present tense verb takes -es: 'goes'","'She goes to school daily.'"]},
+qs:[
+{q:"Choose the correct word: 'Each of the students ___ present.'",o:["are","were","is","have"],a:2,e:"'Each' is singular, so it takes 'is'."},
+{q:"'She has been working here ___ 2019.'",o:["for","since","from","during"],a:1,e:"'Since' is used with a point in time (2019)."},
+{q:"'He is ___ honest man.'",o:["a","an","the","no article"],a:1,e:"'Honest' begins with a vowel sound (silent h), so use 'an'."}]},
+{id:'v2',title:'Vocabulary: Synonyms & Antonyms',intro:"Learn words in families and use roots and prefixes to guess meanings.",
+formulas:["bene- = good, mal- = bad","Synonym = similar meaning; antonym = opposite","Use context clues in the sentence","Learn 5 new words a day and use them in sentences"],
+ex:{q:"Antonym of 'benevolent'?",s:["bene = good, so benevolent = kindly","Opposite: malevolent (mal = bad)"]},
+qs:[
+{q:"Synonym of 'Abundant'.",o:["Scarce","Plentiful","Rare","Tiny"],a:1,e:"Abundant means existing in large quantities: plentiful."},
+{q:"Antonym of 'Benevolent'.",o:["Kind","Generous","Malevolent","Gentle"],a:2,e:"Benevolent = well-meaning; malevolent = wishing harm."},
+{q:"One word for 'a person who speaks many languages'.",o:["Polyglot","Orator","Pedant","Novice"],a:0,e:"A polyglot knows and uses several languages."}]}
+]}];
+
+const SOFTQ=[
+{q:"In the STAR method for behavioural answers, what does 'A' stand for?",o:["Aim","Action","Answer","Attitude"],a:1,e:"STAR = Situation, Task, Action, Result."},
+{q:"You know the topic well in a group discussion. What is the best way to begin?",o:["Interrupt others so you speak first","Open with a clear definition or fact and invite others in","Stay silent until the end","Read from prepared notes"],a:1,e:"A clear, confident opening sets direction without dominating."},
+{q:"'What is your biggest weakness?' Which answer is best?",o:["I have none","A real, non-critical weakness plus how you are improving it","Blame a past teammate","I work too much"],a:1,e:"Honesty plus a concrete improvement plan shows self-awareness."},
+{q:"Which is the most professional way to start an email to a recruiter?",o:["Hey bro,","Dear Mr. Rao,","Yo,","No greeting at all"],a:1,e:"A polite, personalised greeting sets a professional tone."}];
+
+const SOFT=[
+{t:"Tell me about yourself",pts:["Use present → past → future: who you are now, what shaped you, where you're heading","Keep it to 60–90 seconds","Mention one project and one strength with evidence","Practise aloud instead of memorising a script"]},
+{t:"STAR method for behavioural questions",pts:["Situation: set the scene in one line","Task: what you were responsible for","Action: what YOU did (say 'I', not only 'we')","Result: outcome with numbers if possible, and what you learned"]},
+{t:"Group Discussion (GD) skills",pts:["Start with a definition, fact or clear stand","Listen, then build: 'I agree with Priya and would add…'","Speak for 30–40 seconds at a time, don't interrupt","Summarise the discussion if you get the chance"]},
+{t:"Body language and etiquette",pts:["Reach 15 minutes early and keep your phone on silent","Sit upright, keep natural eye contact, smile","Dress formally and neatly, carry a file with resume copies","Thank the interviewer at the end"]},
+{t:"Resume basics",pts:["One page: Education, Skills, Projects, Achievements","Use action verbs and add numbers (accuracy 92%, 3-member team)","Never claim skills you can't explain in an interview","Save as Name_Branch.pdf"]},
+{t:"Professional email and phone etiquette",pts:["Clear subject line, greeting, short paragraphs, polite sign-off","Proofread names and dates before sending","On calls: quiet place, introduce yourself, confirm details","Reply within 24 hours"]},
+{t:"Handling tough or unknown questions",pts:["Pause two seconds and think; it's okay to ask for the question again","If you don't know: 'I'm not sure, but I would approach it by…'","Never bluff about technical facts","Stay calm and polite even if the interviewer pushes back"]}];
+
+const TECH={
+eee:{name:"EEE",qa:[
+{q:"State Ohm's law.",a:"At constant temperature, the current through a conductor is directly proportional to the voltage across it: V = I × R."},
+{q:"What is the difference between AC and DC?",a:"DC flows in one direction with constant polarity (batteries). AC reverses direction periodically (mains supply, 50 Hz in India). AC is easy to step up or down with transformers, which makes long-distance transmission efficient."},
+{q:"Why is a transformer rated in kVA and not kW?",a:"Copper loss depends on current and iron loss depends on voltage. Neither depends on the load's power factor, so the transformer's limit is set by V × I (kVA), not by real power."},
+{q:"Explain the working principle of a DC motor.",a:"A current-carrying conductor placed in a magnetic field experiences a force (F = B I L). The commutator reverses the current in the armature coil every half rotation so the torque stays in one direction."},
+{q:"What is power factor and why does it matter?",a:"Power factor = real power ÷ apparent power = cos φ. A low power factor means more current for the same real power, so more losses and larger cables. It is improved with capacitor banks."},
+{q:"Why is 3-phase supply preferred for industry?",a:"It delivers constant power, needs less conductor material for the same power, and 3-phase motors are self-starting and more efficient."}],
+mcq:[
+{q:"The SI unit of inductance is:",o:["Farad","Henry","Weber","Tesla"],a:1,e:"Inductance is measured in Henry (H)."},
+{q:"Synchronous speed of a 4-pole machine on a 50 Hz supply is:",o:["750 rpm","1000 rpm","1500 rpm","3000 rpm"],a:2,e:"Ns = 120 f / P = 120 × 50 / 4 = 1500 rpm."},
+{q:"A transformer works on the principle of:",o:["Self induction only","Mutual induction","Fleming's rule only","Ohm's law"],a:1,e:"A changing flux in the primary induces an EMF in the secondary: mutual induction."},
+{q:"Which formula gives the power of a balanced 3-phase load?",o:["V·I·cos φ","√3 · V_L · I_L · cos φ","3 · V_L · I_L","V² / R only"],a:1,e:"P = √3 × line voltage × line current × cos φ."}]},
+ece:{name:"ECE",qa:[
+{q:"What is the difference between BJT and FET?",a:"A BJT is current-controlled and bipolar (both electrons and holes) with low input impedance. A FET is voltage-controlled and unipolar with very high input impedance and lower noise."},
+{q:"How does a diode work?",a:"A PN junction conducts when forward biased (P to positive) once the barrier potential (about 0.7 V for silicon) is crossed. In reverse bias it blocks current apart from a tiny leakage."},
+{q:"List the characteristics of an ideal op-amp.",a:"Infinite open-loop gain, infinite input impedance, zero output impedance, infinite bandwidth and infinite CMRR. Real op-amps approximate these."},
+{q:"State the Nyquist sampling theorem.",a:"A signal can be reconstructed without aliasing if it is sampled at a rate of at least twice its highest frequency component: fs ≥ 2 f_max."},
+{q:"Difference between a microprocessor and a microcontroller?",a:"A microprocessor is a CPU that needs external memory and I/O chips (PCs). A microcontroller integrates the CPU, memory and peripherals on one chip and is used in embedded systems."},
+{q:"Why do we need modulation?",a:"It shortens the antenna size to a practical length, allows many signals to share a medium through multiplexing, and reduces interference and noise."}],
+mcq:[
+{q:"The input impedance of an ideal op-amp is:",o:["Zero","Infinite","1 kΩ","100 Ω"],a:1,e:"Ideal op-amps draw no input current."},
+{q:"The minimum sampling frequency for a signal with maximum frequency 4 kHz is:",o:["2 kHz","4 kHz","8 kHz","16 kHz"],a:2,e:"fs = 2 × 4 = 8 kHz."},
+{q:"Which of these is a universal gate?",o:["AND","OR","NAND","XOR"],a:2,e:"NAND (and NOR) can build any logic function."},
+{q:"A Zener diode is mainly used as a:",o:["Rectifier","Amplifier","Voltage regulator","Oscillator"],a:2,e:"In reverse breakdown a Zener holds a nearly constant voltage."}]},
+civil:{name:"Civil",qa:[
+{q:"What does M25 concrete mean?",a:"'M' stands for mix and 25 means a characteristic compressive strength of 25 N/mm² at 28 days, tested on 150 mm cubes. The nominal mix ratio is 1 : 1 : 2 (cement : sand : aggregate)."},
+{q:"What is the function of cement in concrete?",a:"Cement is the binder. It reacts with water (hydration) to form a paste that binds sand and aggregate into a hard mass."},
+{q:"What is a slump test?",a:"It measures the workability of fresh concrete. A cone is filled, lifted, and the vertical drop (slump) of the concrete is measured. A higher slump means a wetter, more workable mix."},
+{q:"Difference between one-way and two-way slab?",a:"If the ratio of longer span to shorter span is greater than 2, the slab bends mainly in one direction (one-way). If it is 2 or less, it bends in both directions (two-way)."},
+{q:"What is the bearing capacity of soil?",a:"The maximum pressure the soil can carry from a foundation without shear failure or excessive settlement. Safe bearing capacity = ultimate capacity ÷ factor of safety."},
+{q:"Why is curing important?",a:"Curing keeps concrete moist so cement continues to hydrate. Without it, the concrete loses strength, shrinks and cracks."}],
+mcq:[
+{q:"The slump test measures the ___ of concrete.",o:["Strength","Workability","Durability","Setting time"],a:1,e:"Slump indicates workability."},
+{q:"As per IS 456, minimum curing period for OPC concrete is:",o:["1 day","3 days","7 days","28 days"],a:2,e:"At least 7 days of moist curing for ordinary Portland cement."},
+{q:"The unit of stress is:",o:["N","N/mm²","N·m","mm"],a:1,e:"Stress = force ÷ area, so N/mm² (MPa)."},
+{q:"A slab is one-way when the ratio of longer to shorter span is:",o:["Less than 1","Equal to 1","Greater than 2","Between 1 and 1.5"],a:2,e:"Above 2, bending is mainly along the short span."}]},
+mech:{name:"Mechanical",qa:[
+{q:"State the first law of thermodynamics.",a:"Energy can neither be created nor destroyed. For a closed system: ΔU = Q − W, where heat added increases internal energy or does work."},
+{q:"Difference between petrol and diesel engines?",a:"Petrol engines follow the Otto cycle with spark ignition and lower compression ratios (8–12). Diesel engines follow the Diesel cycle with compression ignition and higher compression ratios (14–22), and are more efficient."},
+{q:"What is Reynolds number?",a:"Re = ρ v D / μ. It compares inertial to viscous forces. In pipes, flow is laminar below about 2000 and turbulent above about 4000."},
+{q:"What is factor of safety?",a:"Factor of safety = ultimate stress ÷ working (allowable) stress. It gives a margin against uncertainty in loads and materials."},
+{q:"Difference between stress and strain?",a:"Stress is the internal resisting force per unit area (N/mm²). Strain is the relative deformation (change in length ÷ original length) and has no unit."},
+{q:"What is Carnot efficiency?",a:"The maximum possible efficiency of a heat engine operating between two temperatures: η = 1 − T_cold / T_hot, with temperatures in kelvin."}],
+mcq:[
+{q:"A Carnot engine works between 600 K and 300 K. Its efficiency is:",o:["25%","50%","75%","100%"],a:1,e:"η = 1 − 300/600 = 50%."},
+{q:"Which cycle is used in a diesel engine?",o:["Otto","Diesel","Brayton","Rankine"],a:1,e:"The Diesel cycle (compression ignition)."},
+{q:"The SI unit of dynamic viscosity is:",o:["N/m","Pa·s","m²/s","kg/m³"],a:1,e:"Dynamic viscosity: Pascal-second."},
+{q:"Hooke's law is valid up to the:",o:["Yield point","Elastic (proportional) limit","Ultimate stress","Fracture point"],a:1,e:"Stress is proportional to strain only within the proportional/elastic limit."}]},
+cse:{name:"CSE/IT",qa:[
+{q:"Array vs linked list?",a:"Arrays store elements contiguously with O(1) random access but costly insert/delete. Linked lists store nodes with pointers, giving O(1) insert/delete at a known node but O(n) access."},
+{q:"What are the four pillars of OOP?",a:"Encapsulation (bundling data with methods and hiding it), abstraction (exposing only essentials), inheritance (reusing a parent class), polymorphism (one interface, many forms: overloading and overriding)."},
+{q:"Process vs thread?",a:"A process is an independent program with its own memory. Threads are lightweight units inside a process that share its memory, so switching and communication are cheaper."},
+{q:"What is normalization in DBMS?",a:"Organising tables to reduce redundancy and anomalies by splitting them and defining relations (1NF, 2NF, 3NF, BCNF)."},
+{q:"Primary key vs foreign key?",a:"A primary key uniquely identifies each row and can't be NULL. A foreign key in one table refers to the primary key of another to enforce referential integrity."},
+{q:"Time complexity of binary search and its condition?",a:"O(log n). The array must be sorted. Each step halves the search range."},
+{q:"TCP vs UDP?",a:"TCP is connection-oriented, reliable and ordered (web, email). UDP is connectionless and faster but unreliable (streaming, DNS, gaming)."},
+{q:"What is a deadlock?",a:"Processes wait forever for resources held by each other. It needs four conditions: mutual exclusion, hold and wait, no pre-emption and circular wait."}],
+mcq:[
+{q:"The time complexity of binary search on a sorted array is:",o:["O(n)","O(log n)","O(n log n)","O(1)"],a:1,e:"The search space halves each step."},
+{q:"Which data structure follows LIFO?",o:["Queue","Stack","Tree","Graph"],a:1,e:"Stack: last in, first out."},
+{q:"Which SQL clause filters groups created by GROUP BY?",o:["WHERE","HAVING","ORDER BY","LIMIT"],a:1,e:"HAVING filters aggregated groups; WHERE filters rows before grouping."},
+{q:"What is the output of print(2**3) in Python?",o:["6","8","9","23"],a:1,e:"** is the power operator: 2³ = 8."}]}
+};
+
+const CODING=[
+{id:"d1",type:"Fix the bug",title:"Sum of an array",fn:"sumArray",
+desc:"This function should return the sum of all numbers in an array, but it returns NaN. Fix it.",
+starter:`function sumArray(arr) {\n  let sum = 0;\n  for (let i = 0; i <= arr.length; i++) {\n    sum += arr[i];\n  }\n  return sum;\n}`,
+tests:[{a:[[1,2,3]],e:6},{a:[[]],e:0},{a:[[5]],e:5}],
+hint:"Look at the loop condition. What is arr[arr.length]?",
+solution:`function sumArray(arr) {\n  let sum = 0;\n  for (let i = 0; i < arr.length; i++) {\n    sum += arr[i];\n  }\n  return sum;\n}`,
+why:"Off-by-one error: valid indexes are 0 to length − 1. With <= the loop reads arr[length], which is undefined, and adding undefined gives NaN. Interviewers love this one.",
+bugQ:{q:"What is the bug?",o:["The sum variable starts at the wrong value","The loop runs one time too many (<= instead of <)","The function should use return sum inside the loop","arr.length is not valid in JavaScript"],a:1}},
+{id:"d2",type:"Fix the bug",title:"Palindrome check",fn:"isPalindrome",
+desc:"Return true if the string reads the same forwards and backwards. It always returns false. Fix it.",
+starter:`function isPalindrome(s) {\n  const rev = s.split('').reverse();\n  return s === rev;\n}`,
+tests:[{a:["madam"],e:true},{a:["hello"],e:false},{a:["a"],e:true}],
+hint:"What type is rev? What type is s?",
+solution:`function isPalindrome(s) {\n  const rev = s.split('').reverse().join('');\n  return s === rev;\n}`,
+why:"reverse() returns an array, and a string is never strictly equal to an array. Join the array back into a string before comparing.",
+bugQ:{q:"What is the bug?",o:["reverse() doesn't exist for strings","A string is compared with an array","=== should be ==","split('') needs a space inside the quotes"],a:1}},
+{id:"d3",type:"Fix the bug",title:"Largest number",fn:"findMax",
+desc:"Return the largest number in a non-empty array. It fails when all numbers are negative. Fix it.",
+starter:`function findMax(arr) {\n  let max = 0;\n  for (const n of arr) {\n    if (n > max) max = n;\n  }\n  return max;\n}`,
+tests:[{a:[[-5,-2,-9]],e:-2},{a:[[1,7,3]],e:7},{a:[[4]],e:4}],
+hint:"What if every value is below the starting value of max?",
+solution:`function findMax(arr) {\n  let max = arr[0];\n  for (const n of arr) {\n    if (n > max) max = n;\n  }\n  return max;\n}`,
+why:"Initialising max to 0 is a hidden assumption that at least one value is ≥ 0. Start with the first element (or -Infinity) instead.",
+bugQ:{q:"What is the bug?",o:["The loop skips the last element","max is initialised to 0, which breaks for all-negative input","for...of can't be used on arrays","The comparison should be n < max"],a:1}},
+{id:"s1",type:"Write the solution",title:"Reverse the words",fn:"reverseWords",
+desc:"Write reverseWords(s) that reverses the order of words in a sentence. Example: 'I love coding' → 'coding love I'.",
+starter:`function reverseWords(s) {\n  // your code here\n}`,
+tests:[{a:["hello world"],e:"world hello"},{a:["I love coding"],e:"coding love I"},{a:["one"],e:"one"}],
+hint:"Split on spaces, reverse the array, join back.",
+solution:`function reverseWords(s) {\n  return s.trim().split(/\\s+/).reverse().join(' ');\n}`,
+why:"Split → reverse → join. Time O(n). Follow-up asked in interviews: do it without built-in reverse (two pointers)."},
+{id:"s2",type:"Write the solution",title:"Two Sum",fn:"twoSum",
+desc:"Given an array nums and a target, return the indices [i, j] (i < j) of the two numbers that add up to the target. Exactly one answer exists.",
+starter:`function twoSum(nums, target) {\n  // your code here\n}`,
+tests:[{a:[[2,7,11,15],9],e:[0,1]},{a:[[3,2,4],6],e:[1,2]},{a:[[3,3],6],e:[0,1]}],
+hint:"For each number, ask: have I already seen (target − number)? Store seen values in a Map.",
+solution:`function twoSum(nums, target) {\n  const seen = new Map();\n  for (let i = 0; i < nums.length; i++) {\n    const need = target - nums[i];\n    if (seen.has(need)) return [seen.get(need), i];\n    seen.set(nums[i], i);\n  }\n}`,
+why:"Brute force with two loops is O(n²). A hash map gives O(n) time and O(n) space. A classic in TCS/Infosys/Zoho style interviews."},
+{id:"s3",type:"Write the solution",title:"FizzBuzz",fn:"fizzBuzz",
+desc:"Return an array of strings for 1..n: 'FizzBuzz' if divisible by 3 and 5, 'Fizz' if by 3, 'Buzz' if by 5, otherwise the number as a string.",
+starter:`function fizzBuzz(n) {\n  // your code here\n}`,
+tests:[{a:[5],e:["1","2","Fizz","4","Buzz"]},{a:[3],e:["1","2","Fizz"]},{a:[15],e:["1","2","Fizz","4","Buzz","Fizz","7","8","Fizz","Buzz","11","Fizz","13","14","FizzBuzz"]}],
+hint:"Check divisibility by both 3 and 5 first.",
+solution:`function fizzBuzz(n) {\n  const out = [];\n  for (let i = 1; i <= n; i++) {\n    if (i % 15 === 0) out.push('FizzBuzz');\n    else if (i % 3 === 0) out.push('Fizz');\n    else if (i % 5 === 0) out.push('Buzz');\n    else out.push(String(i));\n  }\n  return out;\n}`,
+why:"The order of conditions matters: test the combined case (15) first, otherwise it is caught by the 3 or 5 branch."},
+{id:"s4",type:"Write the solution",title:"Count vowels",fn:"countVowels",
+desc:"Return the number of vowels (a, e, i, o, u, in any case) in a string.",
+starter:`function countVowels(s) {\n  // your code here\n}`,
+tests:[{a:["Hello World"],e:3},{a:["rhythm"],e:0},{a:["AEIOU"],e:5}],
+hint:"Convert to lower case and check each character, or use a regular expression.",
+solution:`function countVowels(s) {\n  let c = 0;\n  for (const ch of s.toLowerCase()) {\n    if ('aeiou'.includes(ch)) c++;\n  }\n  return c;\n}`,
+why:"Normalise case first. O(n) time, O(1) space."}
+];
+
+const HRQ=[
+{q:"Tell me about yourself.",a:"Present → past → future in about 75 seconds. 'I'm Priya, a final-year ECE student at ___. I enjoy embedded systems and built a smart irrigation project using Arduino. I'm strong at problem-solving and teamwork, and I'm looking to start my career in a role where I can learn and contribute.'"},
+{q:"What are your strengths?",a:"Pick 2 strengths and give proof. 'I learn quickly. I picked up Python in a month and used it in my final-year project.'"},
+{q:"What is your weakness?",a:"Choose a real, non-critical one plus a fix. 'I used to hesitate to speak in groups, so I joined the college debate club and now present regularly.'"},
+{q:"Why should we hire you?",a:"Match your skills to the role. 'I have solid fundamentals, hands-on project experience, and I'm quick to learn. I'll be productive fast and I take feedback well.'"},
+{q:"Where do you see yourself in 5 years?",a:"Show growth aligned with the company. 'I want to become a strong contributor in my domain, take on more responsibility, and keep upskilling.'"},
+{q:"Why do you want to join this company?",a:"Research first: services, culture, training. Then link it to your goals. Avoid generic answers like 'good salary'."},
+{q:"Describe a challenge or conflict you handled.",a:"Use STAR. Situation → Task → your Action → Result. Show that you stayed calm, listened and found a solution."},
+{q:"Are you willing to relocate or work in shifts?",a:"Be honest. 'Yes, I'm flexible. I see it as a chance to learn.' If you have a genuine constraint, say so politely."},
+{q:"What is your salary expectation?",a:"For freshers: 'I'm open to the company's standard package for this role. My priority is learning and growth.'"},
+{q:"Do you have any questions for us?",a:"Always ask one. 'What does the training programme look like for freshers?' or 'What skills would help me succeed in the first six months?'"}];
+
+const COMPANIES=[
+{id:"tcs",name:"TCS",type:"IT",tag:"IT services",process:["Online national qualifier test: numerical, verbal, reasoning, plus programming logic and coding","Technical interview","Managerial round","HR round"],
+tips:["Aptitude speed matters: practise time-bound sets","Be ready to explain every line of your final-year project","Know the basics of one language, DBMS and OS"],
+qs:[{q:"Why do you want to join TCS?",a:"Talk about the range of domains, structured training for freshers and long-term learning. Link it to your skills. Avoid answers that only mention job security."},
+{q:"Are you willing to relocate?",a:"'Yes, I'm flexible and see relocation as an opportunity to work with different teams and domains.'"},
+{q:"Explain your final-year project.",a:"Problem → your role → technology used → result → what you'd improve. Rehearse the follow-up: 'What was the hardest bug?'"},
+{q:"What is the difference between a compiler and an interpreter?",a:"A compiler translates the whole program into machine code before running (C, C++). An interpreter executes line by line (Python). Compiled code is usually faster; interpreted code is easier to debug."}]},
+{id:"infy",name:"Infosys",type:"IT",tag:"IT services",process:["Online assessment: reasoning, mathematical ability, verbal and pseudo-code/technical questions","Technical + HR interview"],
+tips:["Reasoning and verbal sections have sectional cut-offs, so don't neglect either","Revise OOP, SQL and basic data structures"],
+qs:[{q:"Why Infosys?",a:"Mention learning culture, breadth of clients and the fresher training programme, then connect it to your goals."},
+{q:"Explain the four pillars of OOP with an example.",a:"Use a real example, e.g. a Vehicle base class → Car and Bike (inheritance), each with its own start() (polymorphism), with private fuel data (encapsulation) and a simple drive() interface (abstraction)."},
+{q:"Difference between DELETE and TRUNCATE?",a:"DELETE removes selected rows, can use WHERE and can be rolled back. TRUNCATE removes all rows quickly, resets identity and usually can't be filtered."},
+{q:"Tell me about a time you solved a problem in a team.",a:"Use STAR and mention your specific action and the measurable result."}]},
+{id:"wipro",name:"Wipro",type:"IT",tag:"IT services",process:["Online aptitude, written communication and coding assessment","Technical and HR interview"],
+tips:["Practise writing short, error-free English passages","Keep 2 coding problems (arrays, strings) ready to explain"],
+qs:[{q:"What do you know about Wipro?",a:"Research the services (IT, consulting, engineering), recent news and values from the official site. Show that you've prepared."},
+{q:"How do you handle pressure and deadlines?",a:"Give a college example: prioritised tasks, broke work into steps, communicated early when help was needed."},
+{q:"Difference between stack and queue?",a:"Stack: LIFO (push/pop). Queue: FIFO (enqueue/dequeue). Examples: function call stack vs print queue."},
+{q:"What is your greatest weakness?",a:"State a real one and how you're improving it (see HR bank)."}]},
+{id:"cts",name:"Cognizant",type:"IT",tag:"IT services",process:["Aptitude, communication and coding assessment","Technical/HR interview"],
+tips:["Communication assessment counts: speak clearly and structure answers","Learn basics of SQL and one programming language well"],
+qs:[{q:"Why Cognizant?",a:"Mention training, digital transformation projects and growth path. Add one reason specific to you."},
+{q:"How do you keep learning new technologies?",a:"'I follow structured courses, build small projects and read documentation. Recently I built ___ to learn ___.'"},
+{q:"What is normalization?",a:"Structuring tables to remove redundancy and anomalies through normal forms (1NF, 2NF, 3NF)."},
+{q:"Give an example of taking leadership.",a:"Use STAR: a club event, project or lab task where you coordinated others and achieved a result."}]},
+{id:"acc",name:"Accenture",type:"IT",tag:"IT services / consulting",process:["Cognitive and technical assessment (pseudo-code, networking and security basics, MCQs)","Coding round","Communication assessment","Interview"],
+tips:["Prepare pseudo-code tracing and basic cloud/networking/security concepts","Practise the spoken-English section aloud"],
+qs:[{q:"How would you handle a client changing requirements?",a:"Listen, clarify the impact on scope and time, communicate with the team and prioritise. Show flexibility and structure."},
+{q:"Tell me about a challenge you overcame.",a:"STAR: pick a real difficulty, describe your action and what you learned."},
+{q:"What are IaaS, PaaS and SaaS?",a:"IaaS: raw infrastructure (virtual machines). PaaS: platform to build and deploy apps. SaaS: ready-to-use software (Gmail)."},
+{q:"Why Accenture?",a:"Mention consulting exposure, variety of industries and learning. Tie it to your goals."}]},
+{id:"zoho",name:"Zoho",type:"IT",tag:"Product company",process:["Written round with logic and C/programming output questions","Multiple programming rounds where you code on a system","Technical HR"],
+tips:["Coding-heavy: strong logic building matters more than aptitude speed","Practise pattern printing, strings, arrays and basic recursion","Write clean code and explain your approach"],
+qs:[{q:"Find the second largest element in an array without sorting.",a:"Track largest and second largest in a single pass. If n > largest: second = largest, largest = n; else if n > second and n ≠ largest: second = n. O(n)."},
+{q:"Reverse the words in a string without library functions.",a:"Reverse the whole string, then reverse each word in place (two-pointer method). O(n) time."},
+{q:"Why a product company rather than a services company?",a:"Talk about ownership, building things end to end and deeper problem-solving."},
+{q:"How do you debug a program that gives wrong output?",a:"Reproduce with small input, print or trace intermediate values, check boundary conditions, isolate the failing section, and fix one thing at a time."}]},
+{id:"hcl",name:"HCLTech",type:"IT",tag:"IT services",process:["Online aptitude and technical test","Technical and HR interview"],
+tips:["Be clear on your favourite subject and know it deeply","Revise DBMS and OOP"],
+qs:[{q:"Tell me about your strengths and weaknesses.",a:"See the HR bank: two strengths with proof, one real weakness with a fix."},
+{q:"What is a primary key?",a:"A column (or set) that uniquely identifies each row and cannot be NULL."},
+{q:"Explain polymorphism with an example.",a:"One interface, many forms. Compile-time: method overloading. Runtime: overriding, e.g. Shape.area() implemented differently by Circle and Rectangle."}]},
+{id:"cap",name:"Capgemini",type:"IT",tag:"IT services",process:["Online assessment: aptitude, pseudo-code and English","Technical and HR interview"],
+tips:["Practise pseudo-code and English usage","Prepare short examples of teamwork"],
+qs:[{q:"Difference between INNER JOIN and LEFT JOIN?",a:"INNER JOIN returns only matching rows from both tables. LEFT JOIN returns all rows from the left table and matched rows from the right (NULL where no match)."},
+{q:"Describe your teamwork experience.",a:"STAR: project team, your role, how you handled a disagreement, what the team achieved."},
+{q:"Where do you see yourself in 3 years?",a:"Growing technical depth, taking ownership of modules and mentoring newer joiners."}]},
+{id:"lt",name:"L&T",type:"Core",tag:"Civil · Mechanical · EEE",process:["Aptitude and core technical test","Discipline-wise technical interview (Civil / Mech / Electrical)","HR round"],
+tips:["Revise core subjects and be ready for basics","Show comfort with site or plant work and safety culture"],
+qs:[{q:"Explain your core project or internship.",a:"State the problem, your role, the design or method, and the outcome with numbers. Be ready to draw a sketch."},
+{q:"Why is safety important on a construction site?",a:"It protects lives, prevents delays and legal liability and keeps productivity high. Mention PPE, toolbox talks and hazard identification."},
+{q:"Are you comfortable with site postings and long hours?",a:"'Yes, I understand core roles involve site work and I'm ready for it and eager to learn on the ground.'"},
+{q:"What is the difference between M20 and M25 concrete?",a:"M20 has a characteristic strength of 20 N/mm² (nominal mix 1:1.5:3), M25 has 25 N/mm² (1:1:2). M25 is used where higher strength is needed."}]},
+{id:"bosch",name:"Bosch",type:"Core",tag:"ECE · EEE · Mechanical",process:["Aptitude / technical screening","Technical interview","HR interview"],
+tips:["Know embedded basics, sensors and your project deeply","Be ready with a systematic problem-solving example"],
+qs:[{q:"Explain a sensor you have used.",a:"Describe what it measures, how it works (e.g. an LM35 outputs 10 mV per °C), how you interfaced it and how you calibrated it."},
+{q:"Microcontroller vs microprocessor?",a:"A microcontroller has CPU, memory and peripherals on one chip (embedded control). A microprocessor is a CPU needing external memory and I/O."},
+{q:"Tell me about a time you solved a problem systematically.",a:"STAR with emphasis on how you isolated the cause, tested hypotheses and verified the fix."}]},
+{id:"auto",name:"Automotive (Tata Motors etc.)",type:"Core",tag:"Mechanical · Electrical",process:["Written/aptitude screening","Technical interview on core subjects","HR round"],
+tips:["Revise IC engines, thermodynamics and manufacturing basics","Learn about lean manufacturing and quality tools"],
+qs:[{q:"Explain the four-stroke engine cycle.",a:"Intake (piston down, valve open), compression, power (ignition and expansion), exhaust. Two crankshaft rotations per cycle."},
+{q:"What is 5S / lean manufacturing?",a:"5S: Sort, Set in order, Shine, Standardise, Sustain. Lean means eliminating waste to add value for the customer."},
+{q:"Why do you want to work in the automotive industry?",a:"Show genuine interest: EVs, safety, manufacturing scale. Mention a project or a vehicle-related hobby."}]},
+{id:"psu",name:"Power & Core PSUs",type:"Core",tag:"EEE · Mechanical (GATE/written + interview)",process:["Written test or GATE score based shortlisting (varies by organisation)","Technical interview","HR / group discussion"],
+tips:["Revise machines, power systems and thermodynamics","Follow the current notification for the exact process"],
+qs:[{q:"Explain the working of a thermal power plant.",a:"Coal burns in the boiler to make steam, which spins a turbine (Rankine cycle), the turbine drives a generator, and the condenser returns the steam to water for reuse."},
+{q:"Why is power transmitted at high voltage?",a:"For the same power P = V × I, higher V means lower current, so I²R line losses fall and thinner conductors can be used."},
+{q:"What is the function of a transformer?",a:"It steps voltage up or down at the same frequency using electromagnetic induction, with very high efficiency."}]}
+];
+
+</script>
+<script>
+/* ============ HELPERS ============ */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const nl=s=>esc(s).replace(/\n/g,'<br>');
+const LS={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
+const clone=o=>JSON.parse(JSON.stringify(o));
+const hash=s=>{let h1=0xdeadbeef,h2=0x41c6ce57;for(let i=0;i<s.length;i++){const c=s.charCodeAt(i);h1=Math.imul(h1^c,2654435761);h2=Math.imul(h2^c,1597334677)}h1=Math.imul(h1^(h1>>>16),2246822507)^Math.imul(h2^(h2>>>13),3266489909);h2=Math.imul(h2^(h2>>>16),2246822507)^Math.imul(h1^(h1>>>13),3266489909);return(4294967296*(2097151&h2)+(h1>>>0)).toString(36)};
+const sidOf=r=>String(r).trim().toLowerCase().replace(/[^a-z0-9_\-.]/g,'');
+const fmtDate=t=>t?new Date(t).toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'}):'-';
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const avg=a=>a.length?Math.round(a.reduce((x,y)=>x+y,0)/a.length):0;
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('show'),2800)}
+let CAN_RUN=false;try{CAN_RUN=new Function('return 1')()===1}catch(e){}
+
+const BRANCHES=['CSE','IT','ECE','EEE','Civil','Mechanical','Other'];
+const BR_KEY={CSE:'cse',IT:'cse',ECE:'ece',EEE:'eee',Civil:'civil',Mechanical:'mech',Other:'cse'};
+
+/* ============ QUESTION BANK ============ */
+const BANK={};
+BOOKS.forEach(b=>b.chapters.forEach(c=>c.qs.forEach((q,i)=>{BANK[`a:${c.id}:${i}`]={...q,id:`a:${c.id}:${i}`,cat:b.short,src:c.title}})));
+Object.entries(TECH).forEach(([k,t])=>t.mcq.forEach((q,i)=>{BANK[`t:${k}:${i}`]={...q,id:`t:${k}:${i}`,cat:t.name+' Technical',src:t.name}}));
+SOFTQ.forEach((q,i)=>{BANK[`s:soft:${i}`]={...q,id:`s:soft:${i}`,cat:'Soft Skills',src:'Soft skills'}});
+const CATS=['Quant','Logical','Verbal','Soft Skills','EEE Technical','ECE Technical','Civil Technical','Mechanical Technical','CSE/IT Technical','Custom'];
+
+/* ============ STATE + DATA LAYER ============ */
+const S={db:null,user:null,sample:null,dl:null,role:null,me:null,view:'home',sub:null,lt:'login',P:null,assess:[],custom:[],students:[],progAll:{},results:[],myResults:[],code:{},test:null,iv:null,unsubs:[],tb:'cse',ctab:'IT',rsel:'',search:''};
+const MEM=(()=>{try{return JSON.parse(LS.get('pm_local')||'{}')}catch(e){return{}}})();
+const LIS={};
+const lPersist=()=>LS.set('pm_local',JSON.stringify(MEM));
+const lRows=(col,f)=>{let r=Object.entries(MEM[col]||{}).map(([id,v])=>({...clone(v),id}));if(f)r=r.filter(x=>x[f[0]]===f[1]);return r};
+const lNotify=col=>(LIS[col]||[]).forEach(l=>l.fire());
+async function dSet(col,id,obj){if(S.db){await S.db.doc(col+'/'+id).set(obj)}else{(MEM[col]=MEM[col]||{})[id]=clone(obj);lPersist();lNotify(col)}}
+async function dGet(col,id){if(S.db){const s=await S.db.doc(col+'/'+id).get();return s.exists?{...clone(s.data()),id}:null}const v=(MEM[col]||{})[id];return v?{...clone(v),id}:null}
+async function dDel(col,id){if(S.db){await S.db.doc(col+'/'+id).delete()}else{if(MEM[col])delete MEM[col][id];lPersist();lNotify(col)}}
+function dWatch(col,cb,f){
+ if(S.db){let q=S.db.collection(col);if(f)q=q.where(f[0],'==',f[1]);const u=q.onSnapshot(s=>cb(s.docs.map(d=>({...clone(d.data()),id:d.id}))),e=>console.warn('watch',col,e&&e.code));S.unsubs.push(u);return}
+ const l={fire:()=>cb(lRows(col,f))};(LIS[col]=LIS[col]||[]).push(l);l.fire();S.unsubs.push(()=>{LIS[col]=(LIS[col]||[]).filter(x=>x!==l)});
+}
+const strip=o=>{const c={...o};delete c.id;return c};
+
+/* ============ PROGRESS ============ */
+function chState(ch,P){const a=((P.chapters||{})[ch.id]||{}).answers||{};let done=0,corr=0;ch.qs.forEach((q,i)=>{if(a[i]!==undefined){done++;if(a[i]===q.a)corr++}});return{done,corr,total:ch.qs.length,complete:done===ch.qs.length}}
+function bookState(b,P){let qDone=0,qTotal=0,corr=0,chDone=0;b.chapters.forEach(c=>{const s=chState(c,P);qDone+=s.done;qTotal+=s.total;corr+=s.corr;if(s.complete)chDone++});return{qDone,qTotal,corr,chDone,chTotal:b.chapters.length,pct:qTotal?Math.round(qDone/qTotal*100):0}}
+function progStats(P){P=P||{};let qDone=0,qTotal=0,corr=0,chDone=0,chTotal=0;BOOKS.forEach(b=>{const s=bookState(b,P);qDone+=s.qDone;qTotal+=s.qTotal;corr+=s.corr;chDone+=s.chDone;chTotal+=s.chTotal});return{qDone,qTotal,corr,chDone,chTotal,pct:qTotal?Math.round(qDone/qTotal*100):0,acc:qDone?Math.round(corr/qDone*100):0,coding:Object.keys(P.coding||{}).length}}
+let saveTimer=null,saving=false,dirty=false;
+function saveP(){dirty=true;clearTimeout(saveTimer);saveTimer=setTimeout(flush,700)}
+async function flush(){if(saving){saveTimer=setTimeout(flush,400);return}if(!dirty||!S.me)return;saving=true;dirty=false;try{await dSet('progress',S.me.id,{...S.P,sid:S.me.id,name:S.me.name,branch:S.me.branch,updated:Date.now()})}catch(e){toast('Could not save progress (check connection)')}saving=false}
+
+/* ============ BOOT + AUTH ============ */
+async function boot(){
+ const cl=window.claude;
+ const grab=async n=>{try{if(!cl||!cl.use)return null;return await Promise.race([cl.use(n),new Promise(r=>setTimeout(()=>r(null),4000))])}catch(e){return null}};
+ const [db,user,sample,dl]=await Promise.all([grab('db'),grab('user'),grab('sample'),grab('downloads')]);
+ S.db=db;S.user=user;S.sample=sample;S.dl=dl;
+ const sid=LS.get('pm_session');
+ if(sid){try{const st=await dGet('students',sid);if(st){await startStudent(st);return}}catch(e){}}
+ if(LS.get('pm_admin')==='1'&&await adminAllowed()){startAdmin();return}
+ renderLogin();
+}
+async function adminAllowed(pass){
+ if(S.user){try{return !!(await S.user.canEdit())}catch(e){return false}}
+ return pass==='admin123'||LS.get('pm_admin')==='1'&&!S.db;
+}
+function renderLogin(){
+ const live=!!S.db;
+ const tabs=[['login','Student login'],['reg','New student'],['admin','Admin']];
+ let form='';
+ if(S.lt==='login')form=`<h2>Welcome back</h2><p class="sub">Log in with your roll number to continue learning.</p>
+  <label>Roll / Register number<input id="lr" autocomplete="username" placeholder="e.g. 21CS101"></label>
+  <label>Password<input id="lp" type="password" autocomplete="current-password" placeholder="Your password"></label>
+  <button class="btn" onclick="doLogin()">Log in</button>`;
+ else if(S.lt==='reg')form=`<h2>Create student account</h2><p class="sub">Your branch decides the technical practice shown to you.</p>
+  <label>Full name<input id="rn" placeholder="Your name"></label>
+  <label>Roll / Register number<input id="rr" placeholder="e.g. 21CS101"></label>
+  <label>Branch<select id="rb">${BRANCHES.map(b=>`<option>${b}</option>`).join('')}</select></label>
+  <label>Create password<input id="rp" type="password" placeholder="At least 4 characters"></label>
+  <button class="btn" onclick="doRegister()">Create account</button>`;
+ else form=`<h2>Admin / Trainer login</h2>`+(S.user?
+  `<p class="sub">Admin access is limited to the owner of this portal and people given <b>edit</b> access to the page.</p><button class="btn" onclick="doAdmin()">Continue as admin</button>`:
+  `<p class="sub">Demo mode: enter the demo passcode <b>admin123</b>. In the shared (live) version, admin access is tied to the portal owner's account instead.</p><label>Passcode<input id="ap" type="password" placeholder="Passcode"></label><button class="btn" onclick="doAdmin()">Log in as admin</button>`);
+ $('#app').innerHTML=`<div class="login"><section class="hero"><div class="logo">🎓 PlaceMate</div><h1>Crack your campus placements.</h1><p>Aptitude books, core technical prep, a coding lab, company-wise interview questions, timed assessments and an AI mock interview, all in one place.</p>
+ <ul><li>📚 Aptitude books with progress tracking</li><li>🛠️ EEE · ECE · Civil · Mech · CSE/IT interview prep</li><li>💻 Debug and solve code with instant test results</li><li>🤖 AI mock interviews with a scored report</li></ul>
+ <div class="modebadge ${live?'live':''}">${live?'● Live: shared data, admin sees all students':'● Demo mode: data is saved only in this browser'}</div></section>
+ <section class="panel"><div class="tabs">${tabs.map(t=>`<button class="${S.lt===t[0]?'on':''}" onclick="S.lt='${t[0]}';renderLogin()">${t[1]}</button>`).join('')}</div>${form}</section></div>`;
+ document.querySelectorAll('.panel input').forEach(i=>i.addEventListener('keydown',e=>{if(e.key==='Enter'){S.lt==='login'?doLogin():S.lt==='reg'?doRegister():doAdmin()}}));
+}
+async function doRegister(){
+ const name=$('#rn').value.trim(),roll=$('#rr').value.trim(),br=$('#rb').value,pw=$('#rp').value,sid=sidOf(roll);
+ if(!name||!sid||pw.length<4){toast('Fill all fields (password: 4+ characters)');return}
+ try{if(await dGet('students',sid)){toast('That roll number is already registered. Log in instead.');return}
+  const st={name,roll,branch:br,ph:hash(pw+sid),created:Date.now()};await dSet('students',sid,st);await startStudent({...st,id:sid})}catch(e){toast('Could not register. Ask your trainer for access.')}
+}
+async function doLogin(){
+ const sid=sidOf($('#lr').value),pw=$('#lp').value;if(!sid||!pw){toast('Enter roll number and password');return}
+ try{const st=await dGet('students',sid);if(!st||st.ph!==hash(pw+sid)){toast('Roll number or password is incorrect');return}await startStudent(st)}catch(e){toast('Could not log in. Check your connection.')}
+}
+async function doAdmin(){
+ const ok=await adminAllowed($('#ap')?$('#ap').value:'');
+ if(!ok){toast(S.user?'This account does not have admin (edit) access to the portal':'Wrong passcode');return}
+ LS.set('pm_admin','1');startAdmin();
+}
+async function startStudent(st){
+ S.role='student';S.me=st;LS.set('pm_session',st.id);LS.del('pm_admin');
+ const p=await dGet('progress',st.id);
+ S.P=p?{chapters:p.chapters||{},coding:p.coding||{},interviews:p.interviews||[]}:{chapters:{},coding:{},interviews:[]};
+ S.tb=BR_KEY[st.branch]||'cse';
+ dWatch('assessments',r=>{S.assess=r.sort((a,b)=>(b.created||0)-(a.created||0));soft(['home','assess'])});
+ dWatch('questions',r=>{S.custom=r;rebuildCustom()});
+ dWatch('results',r=>{S.myResults=r;soft(['home','assess','scores'])},['sid',st.id]);
+ S.view='home';shell();
+}
+function startAdmin(){
+ S.role='admin';S.me={name:'Trainer'};
+ dWatch('students',r=>{S.students=r;soft(['a_over','a_stud'])});
+ dWatch('progress',r=>{S.progAll={};r.forEach(x=>S.progAll[x.id]=x);soft(['a_over','a_stud','a_stu'])});
+ dWatch('results',r=>{S.results=r;soft(['a_over','a_stud','a_stu','a_asm','a_res'])});
+ dWatch('assessments',r=>{S.assess=r.sort((a,b)=>(b.created||0)-(a.created||0));soft(['a_over','a_asm','a_res'])});
+ dWatch('questions',r=>{S.custom=r;rebuildCustom();soft(['a_bank'])});
+ S.view='a_over';shell();
+}
+function rebuildCustom(){Object.keys(BANK).filter(k=>k.startsWith('c:')).forEach(k=>delete BANK[k]);S.custom.forEach(c=>{BANK['c:'+c.id]={id:'c:'+c.id,q:c.q,o:c.o,a:c.a,e:c.e||'',cat:c.cat||'Custom',src:'Custom'}})}
+function logout(){S.unsubs.forEach(u=>{try{u()}catch(e){}});S.unsubs=[];clearInterval(S.timer);LS.del('pm_session');LS.del('pm_admin');Object.assign(S,{role:null,me:null,P:null,assess:[],custom:[],students:[],progAll:{},results:[],myResults:[],test:null,iv:null,view:'home',sub:null,lt:'login'});$('#calcBtn').hidden=true;$('#calc').hidden=true;renderLogin()}
+
+/* ============ SHELL ============ */
+const NAV_S=[['home','🏠','Dashboard'],['apt','📚','Aptitude Books'],['tech','🛠️','Technical Prep'],['code','💻','Coding Lab'],['comp','🏢','Company Q&A'],['soft','🗣️','Soft Skills'],['assess','📝','Assessments'],['iv','🤖','AI Interview'],['scores','📈','My Scores']];
+const NAV_A=[['a_over','📊','Overview'],['a_stud','🎓','Students'],['a_asm','📝','Assessments'],['a_bank','🗂️','Question Bank'],['a_res','🏆','Results']];
+const PARENT={book:'apt',chap:'apt',prob:'code',test:'assess',a_stu:'a_stud',a_new:'a_asm'};
+function shell(){
+ const nav=S.role==='admin'?NAV_A:NAV_S;
+ $('#app').innerHTML=`<header class="top"><div class="logo">🎓 PlaceMate</div><div class="who"><span>${esc(S.me.name)}${S.role==='student'?` · ${esc(S.me.branch)}`:' · Admin'}</span><button class="ghost" onclick="logout()">Log out</button></div></header>
+ <div class="app"><nav class="nav">${nav.map(n=>`<button data-v="${n[0]}" onclick="go('${n[0]}')"><span>${n[1]}</span>${n[2]}</button>`).join('')}</nav><main id="main"></main></div>`;
+ $('#calcBtn').hidden=S.role!=='student';
+ paint();
+}
+function go(v,sub){S.view=v;if(sub!==undefined)S.sub=sub;else if(!['book','chap','prob','a_stu'].includes(v))S.sub=null;paint();window.scrollTo(0,0)}
+function soft(views){if(S.role&&views.includes(S.view))paint()}
+function paint(){const m=$('#main');if(!m)return;const f=VIEWS[S.view];m.innerHTML=f?f():'';const cur=PARENT[S.view]||S.view;document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===cur));afterPaint()}
+function afterPaint(){if(S.view==='test'&&S.test&&!S.test.done)tickTimer();if(S.view==='iv')redrawChat()}
+
+/* ============ STUDENT VIEWS ============ */
+const bar=(p,c)=>`<div class="bar"><i style="width:${p}%;${c?`background:${c}`:''}"></i></div>`;
+function vHome(){
+ const ps=progStats(S.P),res=S.myResults.filter(r=>r.kind!=='interview'),a=avg(res.map(r=>r.pct)),ivs=S.P.interviews||[];
+ const asg=S.assess.filter(x=>x.active!==false);
+ return `<h1>Hi ${esc(S.me.name.split(' ')[0])} 👋</h1><p class="sub">Here's where you stand. Pick up from any card below.</p>
+ <div class="stats">
+  <div class="stat"><b>${ps.pct}%</b><span>Aptitude books completed</span>${bar(ps.pct)}</div>
+  <div class="stat"><b>${ps.acc}%</b><span>Aptitude accuracy</span>${bar(ps.acc,'var(--ok)')}</div>
+  <div class="stat"><b>${res.length?a+'%':'–'}</b><span>Average test score (${res.length} tests)</span>${bar(a,'var(--warn)')}</div>
+  <div class="stat"><b>${ps.coding}/${CODING.length}</b><span>Coding problems solved</span>${bar(Math.round(ps.coding/CODING.length*100),'#0f766e')}</div>
+ </div>
+ <div class="grid2">
+  <section class="card"><h3>Assigned assessments</h3>${asg.length?asg.map(x=>{const r=S.myResults.find(z=>z.key==='a_'+x.id);return `<div class="row"><div><b>${esc(x.title)}</b><small>${x.qids.length} questions · ${x.mins} min</small></div>${r?`<span class="pill ${r.pct>=50?'ok':'bad'}">${r.score}/${r.total}</span>`:''}<button class="btn sm" onclick="startTest('a_${x.id}')">${r?'Retake':'Start'}</button></div>`}).join(''):`<p class="muted">No assessments assigned yet. Try a practice test in the meantime.</p>`}<button class="link" onclick="go('assess')">All assessments →</button></section>
+  <section class="card"><h3>Continue learning</h3>${BOOKS.map(b=>{const s=bookState(b,S.P);return `<div class="row" onclick="openBook('${b.id}')" style="cursor:pointer"><div><b>${b.title}</b><small>${s.chDone}/${s.chTotal} chapters · ${s.qDone}/${s.qTotal} questions</small></div><span class="pill">${s.pct}%</span></div>`}).join('')}<button class="link" onclick="go('apt')">Open aptitude books →</button></section>
+ </div>
+ <div class="grid3">
+  <div class="tile" onclick="go('tech')"><span>🛠️</span><b>Technical prep</b><small>Interview Q&A for ${esc(S.me.branch)} and other branches</small></div>
+  <div class="tile" onclick="go('code')"><span>💻</span><b>Coding lab</b><small>Debug code and write solutions</small></div>
+  <div class="tile" onclick="go('iv')"><span>🤖</span><b>AI mock interview</b><small>${ivs.length?`${ivs.length} done · last ${ivs[0].overall}/10`:'Practise and get a scored report'}</small></div>
+ </div>`;
+}
+/* ---- Aptitude ---- */
+function vApt(){
+ return `<h1>Aptitude Books</h1><p class="sub">Read the concept, learn the shortcuts, follow the worked example, then solve the practice set yourself. Each book shows how much you've finished.</p><div class="books">${BOOKS.map(b=>{const s=bookState(b,S.P);return `<div class="book" style="--bk:${b.color}" onclick="openBook('${b.id}')"><div class="cover"><i class="spine"></i><div class="bt">${b.title}</div><div class="bs">${b.sub}</div><div class="bp">${bar(s.pct,'#fff')}<span>${s.pct}% complete</span></div></div><div class="bm">${s.chDone}/${s.chTotal} chapters · ${s.qDone}/${s.qTotal} questions · ${s.qDone?Math.round(s.corr/s.qDone*100):0}% accuracy</div></div>`}).join('')}</div>`;
+}
+function openBook(id){S.sub={book:id};go('book')}
+function vBook(){
+ const b=BOOKS.find(x=>x.id===S.sub.book),s=bookState(b,S.P);
+ return `<button class="back" onclick="go('apt')">← All books</button><h1>${b.title}</h1>
+ <div class="card cover-inline" style="--bk:${b.color}"><div><b>${s.pct}% of the book finished</b><small>${s.chDone} of ${s.chTotal} chapters complete · score ${s.corr}/${s.qDone||0} correct</small></div>${bar(s.pct,'#fff')}</div>
+ ${b.chapters.map((c,i)=>{const t=chState(c,S.P);return `<div class="row chrow" onclick="openChap('${b.id}','${c.id}')"><div class="num">${i+1}</div><div><b>${c.title}</b><small>${t.done}/${t.total} solved${t.done?` · ${t.corr} correct`:''}</small></div><span class="pill ${t.complete?'ok':''}">${t.complete?'Completed':t.done?'In progress':'Start'}</span></div>`}).join('')}`;
+}
+function openChap(b,c){S.sub={book:b,ch:c};go('chap')}
+function vChap(){
+ const b=BOOKS.find(x=>x.id===S.sub.book),c=b.chapters.find(x=>x.id===S.sub.ch),a=((S.P.chapters[c.id]||{}).answers)||{},t=chState(c,S.P);
+ return `<button class="back" onclick="openBook('${b.id}')">← ${b.title}</button><h1>${c.title}</h1><p class="sub">${c.intro}</p>
+ <section class="card"><h3>📌 Formulas & shortcuts</h3><ul class="fl">${c.formulas.map(f=>`<li>${f}</li>`).join('')}</ul></section>
+ <section class="card example"><h3>✍️ Worked example</h3><p><b>${c.ex.q}</b></p><ol>${c.ex.s.map(x=>`<li>${x}</li>`).join('')}</ol></section>
+ <h2>Now you try <small class="muted">(${t.done}/${t.total} done${t.done?` · ${t.corr} correct`:''})</small></h2>
+ ${c.qs.map((q,i)=>{const sel=a[i],ans=sel!==undefined;return `<div class="q"><div class="qt"><span>Q${i+1}</span>${esc(q.q)}</div><div class="opts">${q.o.map((o,j)=>`<button class="opt ${ans?(j===q.a?'right':j===sel?'wrong':''):''}" ${ans?'disabled':''} onclick="ansQ('${c.id}',${i},${j})">${String.fromCharCode(65+j)}. ${esc(o)}</button>`).join('')}</div>${ans?`<div class="expl ${sel===q.a?'ok':'bad'}"><b>${sel===q.a?'Correct.':'Not quite.'}</b> ${esc(q.e)}</div>`:''}</div>`}).join('')}
+ ${t.complete?`<div class="scorebox"><b>Chapter score: ${t.corr}/${t.total}</b> (${Math.round(t.corr/t.total*100)}%)<div class="btnrow"><button class="btn sm ghost" onclick="retryChap('${c.id}')">Retry this chapter</button>${nextChap(b,c)}</div></div>`:''}
+ <p class="muted">Tip: use the 🧮 calculator at the bottom right to check your arithmetic.</p>`;
+}
+function nextChap(b,c){const i=b.chapters.findIndex(x=>x.id===c.id),n=b.chapters[i+1];return n?`<button class="btn sm" onclick="openChap('${b.id}','${n.id}')">Next: ${n.title} →</button>`:`<button class="btn sm" onclick="openBook('${b.id}')">Back to book</button>`}
+function ansQ(cid,i,j){const ch=(S.P.chapters[cid]=S.P.chapters[cid]||{answers:{}});ch.answers=ch.answers||{};if(ch.answers[i]!==undefined)return;ch.answers[i]=j;saveP();paint()}
+function retryChap(cid){S.P.chapters[cid]={answers:{}};saveP();paint();window.scrollTo(0,0)}
+/* ---- Technical ---- */
+function vTech(){
+ const t=TECH[S.tb];
+ return `<h1>Technical Prep</h1><p class="sub">Core interview questions with model answers. Learn them, then take the practice test.</p>
+ <div class="tabs pills">${Object.entries(TECH).map(([k,v])=>`<button class="${S.tb===k?'on':''}" onclick="S.tb='${k}';paint()">${v.name}</button>`).join('')}</div>
+ <section class="card"><div class="between"><h3>${t.name} interview questions</h3><button class="btn sm" onclick="startTest('p_tech_${S.tb}')">Take ${t.name} practice test</button></div>
+ ${t.qa.map((x,i)=>`<details><summary>${i+1}. ${esc(x.q)}</summary><p>${esc(x.a)}</p></details>`).join('')}</section>
+ <section class="card"><h3>HR questions every company asks</h3>${HRQ.map((x,i)=>`<details><summary>${i+1}. ${esc(x.q)}</summary><p>${esc(x.a)}</p></details>`).join('')}</section>`;
+}
+/* ---- Soft ---- */
+function vSoft(){
+ return `<h1>Soft Skills</h1><p class="sub">Communication, GD and interview etiquette are scored in almost every placement round.</p>
+ <div class="between"><span></span><button class="btn sm" onclick="startTest('p_soft')">Take soft-skills quiz</button></div>
+ ${SOFT.map(s=>`<section class="card"><h3>${s.t}</h3><ul class="fl">${s.pts.map(p=>`<li>${p}</li>`).join('')}</ul></section>`).join('')}`;
+}
+/* ---- Coding ---- */
+function vCode(){
+ const done=S.P.coding||{};
+ return `<h1>Coding Lab</h1><p class="sub">JavaScript problems for CSE/IT students: fix the bug in given code, or write the solution. ${CAN_RUN?'Your code is tested against test cases when you press Run.':'This view cannot run code, so use the bug quiz, write your answer, then compare with the reference solution.'}</p>
+ ${['Fix the bug','Write the solution'].map(tp=>`<h2>${tp}</h2>${CODING.filter(p=>p.type===tp).map(p=>`<div class="row" style="cursor:pointer" onclick="openProb('${p.id}')"><div><b>${p.title}</b><small>${p.desc.slice(0,90)}…</small></div><span class="pill ${done[p.id]?'ok':''}">${done[p.id]?'Solved':'Open'}</span></div>`).join('')}`).join('')}`;
+}
+function openProb(id){S.sub={prob:id};go('prob')}
+function vProb(){
+ const p=CODING.find(x=>x.id===S.sub.prob),code=S.code[p.id]??p.starter,solved=(S.P.coding||{})[p.id];
+ return `<button class="back" onclick="go('code')">← Coding Lab</button><h1>${p.title} <span class="pill ${solved?'ok':''}">${solved?'Solved':p.type}</span></h1><p class="sub">${esc(p.desc)}</p>
+ ${p.bugQ?`<section class="card"><h3>Spot the bug</h3><div class="q"><div class="qt">${p.bugQ.q}</div><div class="opts">${p.bugQ.o.map((o,j)=>`<button class="opt" onclick="bugAns(this,'${p.id}',${j})">${String.fromCharCode(65+j)}. ${esc(o)}</button>`).join('')}</div><div id="bugx"></div></div></section>`:''}
+ <section class="card"><h3>Your code</h3><textarea id="code" class="codebox" spellcheck="false" oninput="S.code['${p.id}']=this.value">${esc(code)}</textarea>
+ <div class="btnrow">${CAN_RUN?`<button class="btn" onclick="runCode('${p.id}')">▶ Run tests</button>`:`<button class="btn" onclick="markSolved('${p.id}')">I solved it, mark as done</button>`}<button class="btn ghost" onclick="$('#hint').hidden=!$('#hint').hidden">Hint</button><button class="btn ghost" onclick="$('#sol').hidden=!$('#sol').hidden">Show solution</button><button class="btn ghost" onclick="S.code['${p.id}']=undefined;paint()">Reset</button></div>
+ <div id="hint" class="expl" hidden><b>Hint:</b> ${esc(p.hint)}</div><div id="out"></div>
+ <div id="sol" hidden><h3>Reference solution</h3><pre class="codeshow">${esc(p.solution)}</pre><div class="expl"><b>Why:</b> ${esc(p.why)}</div></div></section>`;
+}
+function bugAns(btn,pid,j){const p=CODING.find(x=>x.id===pid),ok=j===p.bugQ.a;btn.parentNode.querySelectorAll('.opt').forEach((b,i)=>{b.disabled=true;if(i===p.bugQ.a)b.classList.add('right');else if(i===j)b.classList.add('wrong')});$('#bugx').innerHTML=`<div class="expl ${ok?'ok':'bad'}"><b>${ok?'Correct.':'Not quite.'}</b> ${esc(p.why)}</div>`}
+const show=v=>v===undefined?'undefined':(typeof v==='number'&&isNaN(v))?'NaN':JSON.stringify(v);
+function runCode(pid){
+ const p=CODING.find(x=>x.id===pid),code=$('#code').value;S.code[pid]=code;let fn;
+ try{fn=new Function(code+'\nreturn '+p.fn+';')();if(typeof fn!=='function')throw new Error('Function '+p.fn+' not found')}catch(e){$('#out').innerHTML=`<div class="expl bad"><b>Error:</b> ${esc(e.message)}</div>`;return}
+ const rows=p.tests.map(t=>{try{const out=fn(...clone(t.a));return{ok:show(out)===show(t.e),out:show(out),t}}catch(e){return{ok:false,out:'Error: '+e.message,t}}});
+ const all=rows.every(r=>r.ok);
+ $('#out').innerHTML=`<div class="tests">${rows.map((r,i)=>`<div class="trow ${r.ok?'ok':'bad'}"><b>${r.ok?'✔':'✘'} Test ${i+1}</b><code>${p.fn}(${r.t.a.map(show).join(', ')})</code><span>expected ${esc(show(r.t.e))}, got ${esc(r.out)}</span></div>`).join('')}</div><div class="expl ${all?'ok':'bad'}"><b>${all?'All tests passed! 🎉':`${rows.filter(r=>r.ok).length}/${rows.length} tests passed.`}</b></div>`;
+ if(all)markSolved(pid,true);
+}
+function markSolved(pid,quiet){S.P.coding=S.P.coding||{};if(!S.P.coding[pid]){S.P.coding[pid]=Date.now();saveP()}if(!quiet)toast('Marked as solved')}
+/* ---- Companies ---- */
+function vComp(){
+ if(S.sub&&S.sub.co){const c=COMPANIES.find(x=>x.id===S.sub.co);
+  return `<button class="back" onclick="S.sub=null;paint()">← All companies</button><h1>${c.name} <span class="pill">${c.tag}</span></h1>
+  <section class="card"><h3>Typical selection process</h3><p class="muted">Commonly reported by candidates. Patterns change every year, so always check the company's current notice.</p><ol>${c.process.map(x=>`<li>${x}</li>`).join('')}</ol></section>
+  <section class="card"><h3>How to prepare</h3><ul class="fl">${c.tips.map(x=>`<li>${x}</li>`).join('')}</ul></section>
+  <section class="card"><div class="between"><h3>Questions to learn</h3><button class="btn sm" onclick="ivPreset('${c.id}')">🤖 Practise in AI interview</button></div>${c.qs.map((x,i)=>`<details><summary>${i+1}. ${esc(x.q)}</summary><p>${esc(x.a)}</p></details>`).join('')}</section>`}
+ return `<h1>Company-wise Q&A</h1><p class="sub">See how each company recruits, which questions HR and technical panels ask, and how to answer them.</p>
+ <div class="tabs pills">${['IT','Core'].map(t=>`<button class="${S.ctab===t?'on':''}" onclick="S.ctab='${t}';paint()">${t==='IT'?'IT & software':'Core companies'}</button>`).join('')}</div>
+ <div class="grid3">${COMPANIES.filter(c=>c.type===S.ctab).map(c=>`<div class="tile" onclick="S.sub={co:'${c.id}'};paint();window.scrollTo(0,0)"><b>${c.name}</b><small>${c.tag}</small><small>${c.qs.length} questions</small></div>`).join('')}</div>
+ <section class="card" style="margin-top:16px"><h3>Universal HR questions</h3>${HRQ.map((x,i)=>`<details><summary>${i+1}. ${esc(x.q)}</summary><p>${esc(x.a)}</p></details>`).join('')}</section>`;
+}
+/* ---- Assessments ---- */
+function buildTest(key){
+ const pick=(cats,n)=>shuffle(Object.values(BANK).filter(q=>cats.includes(q.cat))).slice(0,n);
+ const br=BR_KEY[S.me?.branch]||'cse';
+ if(key.startsWith('a_')){const a=S.assess.find(x=>x.id===key.slice(2));if(!a)return null;return{key,title:a.title,mins:a.mins,kind:'assigned',qs:a.qids.map(i=>BANK[i]).filter(Boolean)}}
+ if(key==='p_quant')return{key,title:'Quantitative aptitude: practice test',mins:15,kind:'practice',qs:pick(['Quant'],10)};
+ if(key==='p_lv')return{key,title:'Logical & verbal: practice test',mins:12,kind:'practice',qs:pick(['Logical','Verbal'],10)};
+ if(key==='p_soft')return{key,title:'Soft skills quiz',mins:5,kind:'practice',qs:pick(['Soft Skills'],4)};
+ if(key.startsWith('p_tech_')){const k=key.slice(7);return{key,title:TECH[k].name+' technical: practice test',mins:6,kind:'practice',qs:shuffle(Object.values(BANK).filter(q=>q.id.startsWith('t:'+k+':')))}}
+ if(key==='p_mock')return{key,title:'Full placement mock',mins:20,kind:'practice',qs:[...pick(['Quant'],4),...pick(['Logical'],2),...pick(['Verbal'],2),...shuffle(Object.values(BANK).filter(q=>q.id.startsWith('t:'+br+':'))),...pick(['Soft Skills'],2)]};
+ return null;
+}
+function startTest(key){
+ const t=buildTest(key);if(!t||!t.qs.length){toast('This test has no questions yet');return}
+ clearInterval(S.timer);S.test={...t,ans:{},end:Date.now()+t.mins*60000,done:false};go('test')
+}
+function vAssess(){
+ const asg=S.assess.filter(x=>x.active!==false),br=BR_KEY[S.me.branch]||'cse';
+ const pr=[['p_mock','Full placement mock','Aptitude + technical + soft skills · 20 min'],['p_quant','Quantitative aptitude','10 random questions · 15 min'],['p_lv','Logical & verbal','10 random questions · 12 min'],['p_tech_'+br,TECH[br].name+' technical','Core questions for your branch · 6 min'],['p_soft','Soft skills quiz','4 questions · 5 min']];
+ return `<h1>Assessments</h1><p class="sub">Timed tests. Your score is recorded and visible to your trainer.</p>
+ <section class="card"><h3>Assigned by your trainer</h3>${asg.length?asg.map(x=>{const r=S.myResults.find(z=>z.key==='a_'+x.id);return `<div class="row"><div><b>${esc(x.title)}</b><small>${esc(x.desc||'')} ${x.qids.length} questions · ${x.mins} min${r?` · attempts: ${r.attempts}, best ${r.best}%`:''}</small></div>${r?`<span class="pill ${r.pct>=50?'ok':'bad'}">${r.score}/${r.total} · ${r.pct}%</span>`:'<span class="pill">Not taken</span>'}<button class="btn sm" onclick="startTest('a_${x.id}')">${r?'Retake':'Start'}</button></div>`}).join(''):'<p class="muted">Nothing assigned right now.</p>'}</section>
+ <section class="card"><h3>Practice tests</h3>${pr.map(p=>{const r=S.myResults.find(z=>z.key===p[0]);return `<div class="row"><div><b>${p[1]}</b><small>${p[2]}</small></div>${r?`<span class="pill ${r.pct>=50?'ok':'bad'}">last ${r.pct}%</span>`:''}<button class="btn sm ghost" onclick="startTest('${p[0]}')">Start</button></div>`}).join('')}</section>`;
+}
+function vTest(){
+ const t=S.test;if(!t)return '<p>No test in progress.</p>';
+ if(t.done)return `<h1>${esc(t.title)}</h1><div class="scorebox big"><b>${t.score}/${t.qs.length}</b><span>${t.pct}% ${t.pct>=70?'· Excellent!':t.pct>=50?'· Good, keep practising':'· Needs more practice'}</span></div>
+ <div class="btnrow"><button class="btn" onclick="go('assess')">Back to assessments</button><button class="btn ghost" onclick="startTest('${t.key}')">Retake</button></div><h2>Review</h2>
+ ${t.qs.map((q,i)=>{const s=t.ans[i];return `<div class="q"><div class="qt"><span>Q${i+1}</span>${esc(q.q)}</div><div class="opts">${q.o.map((o,j)=>`<div class="opt ${j===q.a?'right':j===s?'wrong':''}">${String.fromCharCode(65+j)}. ${esc(o)}</div>`).join('')}</div><div class="expl ${s===q.a?'ok':'bad'}"><b>${s===undefined?'Skipped.':s===q.a?'Correct.':'Incorrect.'}</b> ${esc(q.e||'')}</div></div>`}).join('')}`;
+ return `<div class="testbar"><div><b>${esc(t.title)}</b><small id="tcount"></small></div><div class="timer" id="timer">--:--</div></div>
+ ${t.qs.map((q,i)=>`<div class="q" data-q="${i}"><div class="qt"><span>Q${i+1}</span>${esc(q.q)}</div><div class="opts">${q.o.map((o,j)=>`<button class="opt ${t.ans[i]===j?'sel':''}" onclick="pickAns(${i},${j})">${String.fromCharCode(65+j)}. ${esc(o)}</button>`).join('')}</div></div>`).join('')}
+ <div class="btnrow"><button class="btn" onclick="submitTest()">Submit test</button><button class="btn ghost" onclick="if(confirm('Leave this test? Progress will be lost.')){clearInterval(S.timer);S.test=null;go('assess')}">Cancel</button></div>`;
+}
+function pickAns(i,j){S.test.ans[i]=j;document.querySelectorAll(`[data-q="${i}"] .opt`).forEach((b,k)=>b.classList.toggle('sel',k===j));tickCount()}
+function tickCount(){const el=$('#tcount');if(el)el.textContent=` · answered ${Object.keys(S.test.ans).length}/${S.test.qs.length}`}
+function tickTimer(){clearInterval(S.timer);const upd=()=>{const el=$('#timer');if(!el||!S.test||S.test.done){clearInterval(S.timer);return}const s=Math.max(0,Math.round((S.test.end-Date.now())/1000));el.textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');el.classList.toggle('low',s<60);if(s<=0){clearInterval(S.timer);toast("Time's up! Submitting…");submitTest()}};upd();tickCount();S.timer=setInterval(upd,1000)}
+async function submitTest(){
+ const t=S.test;if(!t||t.done)return;clearInterval(S.timer);
+ t.score=t.qs.reduce((a,q,i)=>a+(t.ans[i]===q.a?1:0),0);t.pct=Math.round(t.score/t.qs.length*100);t.done=true;paint();window.scrollTo(0,0);
+ const prev=S.myResults.find(r=>r.key===t.key);
+ try{await dSet('results',S.me.id+'__'+t.key,{sid:S.me.id,name:S.me.name,roll:S.me.roll,branch:S.me.branch,key:t.key,title:t.title,kind:t.kind,score:t.score,total:t.qs.length,pct:t.pct,best:Math.max(prev?.best||0,t.pct),attempts:(prev?.attempts||0)+1,ts:Date.now()});toast('Score saved')}catch(e){toast('Could not save score. Check your connection.')}
+}
+/* ---- Scores ---- */
+function vScores(){
+ const ps=progStats(S.P),res=[...S.myResults].sort((a,b)=>b.ts-a.ts);
+ return `<h1>My Scores</h1><p class="sub">Everything your trainer can see about your progress.</p>
+ <div class="stats"><div class="stat"><b>${ps.pct}%</b><span>Aptitude completed (${ps.qDone}/${ps.qTotal})</span>${bar(ps.pct)}</div><div class="stat"><b>${ps.acc}%</b><span>Aptitude accuracy</span>${bar(ps.acc,'var(--ok)')}</div><div class="stat"><b>${ps.coding}/${CODING.length}</b><span>Coding solved</span></div></div>
+ <section class="card"><h3>Test results</h3>${res.length?`<div class="tbl"><table><tr><th>Test</th><th>Score</th><th>%</th><th>Best</th><th>Attempts</th><th>Date</th></tr>${res.map(r=>`<tr><td>${esc(r.title)}</td><td>${r.score}/${r.total}</td><td>${r.pct}%</td><td>${r.best}%</td><td>${r.attempts}</td><td>${fmtDate(r.ts)}</td></tr>`).join('')}</table></div>`:'<p class="muted">No tests taken yet.</p>'}</section>
+ <section class="card"><h3>Aptitude by chapter</h3>${BOOKS.map(b=>`<h4>${b.title}</h4>`+b.chapters.map(c=>{const s=chState(c,S.P);return `<div class="row"><div><b>${c.title}</b></div><div style="min-width:120px">${bar(s.total?Math.round(s.done/s.total*100):0)}</div><span class="pill ${s.complete?'ok':''}">${s.corr}/${s.total} correct</span></div>`}).join('')).join('')}</section>
+ <section class="card"><h3>AI interview reports</h3>${(S.P.interviews||[]).length?S.P.interviews.map(r=>`<div class="row"><div><b>${esc(r.label)}</b><small>${fmtDate(r.ts)} · ${esc(r.summary||'')}</small></div><span class="pill ${r.overall>=6?'ok':'bad'}">${r.overall}/10</span></div>`).join(''):'<p class="muted">No interviews yet.</p>'}</section>`;
+}
+/* ---- AI interview ---- */
+function vIv(){
+ const iv=S.iv;
+ if(!S.sample)return `<h1>AI Mock Interview</h1><section class="card"><p>The AI interviewer isn't available in this view. Open the portal from your Claude account (or ask your trainer for the shared link) to use it.</p><p class="muted">Meanwhile, practise the questions in <a href="#" onclick="go('comp');return false">Company Q&A</a> and <a href="#" onclick="go('tech');return false">Technical Prep</a> out loud.</p></section>`;
+ if(!iv||iv.stage==='setup'){
+  const br=BR_KEY[S.me.branch]||'cse';
+  return `<h1>AI Mock Interview</h1><p class="sub">Answer 5 questions like in a real interview. You get feedback after every answer and a scored report at the end.</p>
+  <section class="card form"><label>Interview type<select id="ivMode"><option value="hr">HR round</option><option value="tech">Technical round (my branch)</option><option value="company" ${S.ivco?'selected':''}>Company-style round</option><option value="mixed">Mixed HR + technical</option></select></label>
+  <label>Branch<select id="ivBranch">${Object.entries(TECH).map(([k,v])=>`<option value="${k}" ${k===br?'selected':''}>${v.name}</option>`).join('')}</select></label>
+  <label>Company (for company round)<select id="ivCo"><option value="">Any company</option>${COMPANIES.map(c=>`<option value="${c.id}" ${S.ivco===c.id?'selected':''}>${c.name}</option>`).join('')}</select></label>
+  <label>Difficulty<select id="ivLvl"><option>Easy (fresher)</option><option selected>Medium</option><option>Hard</option></select></label>
+  <button class="btn" onclick="ivStart()">Start interview</button><p class="muted">Uses your own Claude usage. Type your answers as you would speak them.</p></section>
+  ${(S.P.interviews||[]).length?`<h2>Previous interviews</h2>${S.P.interviews.map(r=>`<div class="row"><div><b>${esc(r.label)}</b><small>${fmtDate(r.ts)}</small></div><span class="pill ${r.overall>=6?'ok':'bad'}">${r.overall}/10</span></div>`).join('')}`:''}`;
+ }
+ if(iv.stage==='report')return ivReportView();
+ return `<div class="between"><h1>Interview in progress</h1><span class="pill">Answer ${Math.min(iv.answers+1,5)} of 5</span></div><div id="chat" class="chat"></div>
+ <div class="ans"><textarea id="ans" rows="4" placeholder="Type your answer… (Ctrl+Enter to send)" onkeydown="if(event.key==='Enter'&&(event.ctrlKey||event.metaKey))ivSend()"></textarea><div class="btnrow"><button class="btn" id="ivSendBtn" onclick="ivSend()">Send answer</button><button class="btn ghost" onclick="ivStop()">Stop</button><button class="btn ghost" onclick="ivEnd()">End & get report</button></div></div>`;
+}
+function ivPreset(co){S.ivco=co;S.iv=null;go('iv')}
+function ivRules(){
+ const iv=S.iv,t=TECH[iv.br],co=COMPANIES.find(c=>c.id===iv.co);
+ const kind=iv.mode==='hr'?'HR / behavioural':iv.mode==='tech'?`technical (${t.name} core subjects and fundamentals)`:iv.mode==='company'?`company-style ${co?co.name+' ':''}campus interview (mix of technical and HR${co?', reflecting its typical process: '+co.process.join('; '):''})`:`mixed HR and technical (${t.name})`;
+ return `You are a friendly but professional campus-placement interviewer in India conducting a mock ${kind} interview for a final-year ${t.name} engineering student. Difficulty: ${iv.lvl}.
+Rules: Ask exactly ONE question at a time and exactly 5 questions in total. After each candidate answer, give 1-2 sentences of specific feedback (what was good, what was missing), then ask the next question. After the 5th answer, do NOT ask a new question: give brief feedback and say the interview is complete. Keep every reply under 90 words. Plain text only, no markdown or bullet lists. Do not answer your own questions for the candidate.`;
+}
+async function ivStart(){
+ S.iv={stage:'chat',mode:$('#ivMode').value,br:$('#ivBranch').value,co:$('#ivCo').value,lvl:$('#ivLvl').value,turns:[],answers:0,busy:false,stream:''};
+ S.iv.turns.push({role:'user',content:ivRules()+'\n\nThe candidate is ready. Greet them in one line and ask question 1.'});
+ paint();await ivCall();
+}
+async function ivCall(){
+ const iv=S.iv;iv.busy=true;iv.ctl=new AbortController();iv.stream='';redrawChat();
+ try{const {text}=await S.sample(iv.turns,{cache:false,modelTier:'quick',signal:iv.ctl.signal,onText:({text})=>{iv.stream=text;streamUpdate()}});iv.turns.push({role:'assistant',content:text})}
+ catch(e){if(e.code!=='cancelled'){iv.err=e.code==='not_granted'?'You declined AI access, so the interviewer cannot continue.':e.code==='rate_limited'?'Too many requests. Wait a moment and send again.':'The interviewer could not respond. Try sending again.'}if(e.text&&e.code==='cancelled')iv.turns.push({role:'assistant',content:e.text})}
+ iv.busy=false;iv.stream='';redrawChat();
+}
+async function ivSend(){
+ const iv=S.iv,el=$('#ans');if(!iv||iv.busy||!el)return;const v=el.value.trim();if(!v)return;
+ if(iv.turns[iv.turns.length-1].role==='user'){toast('Wait for the interviewer first');return}
+ iv.err='';iv.turns.push({role:'user',content:v});iv.answers++;el.value='';await ivCall();
+ if(iv.answers>=5&&iv.turns[iv.turns.length-1].role==='assistant')await ivReport();
+}
+async function ivRetry(){const iv=S.iv;if(!iv||iv.busy)return;iv.err='';await ivCall();if(iv.answers>=5&&iv.turns[iv.turns.length-1].role==='assistant')await ivReport()}
+function ivStop(){if(S.iv&&S.iv.ctl)S.iv.ctl.abort()}
+async function ivEnd(){const iv=S.iv;if(!iv||iv.busy)return;if(iv.answers<1){S.iv=null;paint();return}if(iv.turns[iv.turns.length-1].role==='user'){toast('Wait for the interviewer to reply first');return}await ivReport()}
+function redrawChat(){
+ const c=$('#chat');if(!c||!S.iv)return;const iv=S.iv;
+ c.innerHTML=iv.turns.map((t,i)=>i===0?'':`<div class="bub ${t.role==='user'?'me':'ai'}"><small>${t.role==='user'?'You':'Interviewer'}</small>${nl(t.content)}</div>`).join('')+(iv.busy?`<div class="bub ai" id="live"><small>Interviewer</small><span id="livetxt">${iv.stream?nl(iv.stream):'<i class="dots">Thinking…</i>'}</span></div>`:'')+(iv.err?`<div class="expl bad">${esc(iv.err)} <button class="btn sm" onclick="ivRetry()">Retry</button></div>`:'');
+ const b=$('#ivSendBtn');if(b)b.disabled=iv.busy;c.scrollTop=c.scrollHeight;
+}
+function streamUpdate(){const l=$('#livetxt');if(l&&S.iv){l.innerHTML=nl(S.iv.stream);const c=$('#chat');c.scrollTop=c.scrollHeight}}
+async function ivReport(){
+ const iv=S.iv;iv.stage='report';iv.report=null;iv.busy=true;paint();
+ const tr=iv.turns.slice(1).map(t=>(t.role==='user'?'CANDIDATE: ':'INTERVIEWER: ')+t.content).join('\n\n');
+ const label=(iv.mode==='hr'?'HR round':iv.mode==='tech'?TECH[iv.br].name+' technical':iv.mode==='company'?(COMPANIES.find(c=>c.id===iv.co)?.name||'Company')+' round':'Mixed round');
+ try{
+  const r=await S.sample.json(`Evaluate this mock campus-placement interview transcript for a fresher. Be fair and specific.\n\n${tr}\n\nReply with ONLY a JSON object of this exact shape:\n{"overall":7,"communication":7,"content":6,"confidence":7,"summary":"one sentence","strengths":["..",".."],"improvements":["..",".."],"tip":"one practical tip for next time"}\nAll scores are integers from 0 to 10.`,{cache:false,modelTier:'default'});
+  const n=v=>Math.max(0,Math.min(10,Math.round(Number(v)||0)));
+  iv.report={overall:n(r.overall),communication:n(r.communication),content:n(r.content),confidence:n(r.confidence),summary:String(r.summary||''),strengths:(r.strengths||[]).map(String).slice(0,4),improvements:(r.improvements||[]).map(String).slice(0,4),tip:String(r.tip||'')};
+  S.P.interviews=[{ts:Date.now(),label,overall:iv.report.overall,summary:iv.report.summary},...(S.P.interviews||[])].slice(0,10);saveP();
+  const prev=S.myResults.find(x=>x.key==='iv');
+  try{await dSet('results',S.me.id+'__iv',{sid:S.me.id,name:S.me.name,roll:S.me.roll,branch:S.me.branch,key:'iv',title:'AI mock interview',kind:'interview',score:iv.report.overall,total:10,pct:iv.report.overall*10,best:Math.max(prev?.best||0,iv.report.overall*10),attempts:(prev?.attempts||0)+1,ts:Date.now()})}catch(e){}
+ }catch(e){iv.reportErr=e.code==='not_granted'?'AI access was declined.':'The report could not be generated. You can try ending the interview again.'}
+ iv.busy=false;if(S.view==='iv')paint();
+}
+function ivReportView(){
+ const iv=S.iv,r=iv.report;
+ if(iv.busy)return `<h1>Preparing your report…</h1><section class="card"><p class="dots">Reviewing your answers. This takes up to a minute.</p></section>`;
+ if(!r)return `<h1>Interview report</h1><div class="expl bad">${esc(iv.reportErr||'No report.')}</div><div class="btnrow"><button class="btn" onclick="ivReport()">Try again</button><button class="btn ghost" onclick="S.iv=null;paint()">Back</button></div>`;
+ const m=(l,v)=>`<div class="stat"><b>${v}/10</b><span>${l}</span>${bar(v*10,v>=6?'var(--ok)':'var(--warn)')}</div>`;
+ return `<h1>Interview report</h1><div class="scorebox big"><b>${r.overall}/10</b><span>${esc(r.summary)}</span></div>
+ <div class="stats">${m('Communication',r.communication)}${m('Answer content',r.content)}${m('Confidence',r.confidence)}</div>
+ <div class="grid2"><section class="card"><h3>👍 Strengths</h3><ul class="fl">${r.strengths.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></section><section class="card"><h3>🎯 To improve</h3><ul class="fl">${r.improvements.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></section></div>
+ ${r.tip?`<div class="expl"><b>Tip:</b> ${esc(r.tip)}</div>`:''}<div class="btnrow"><button class="btn" onclick="S.iv=null;paint()">New interview</button></div>`;
+}
+
+/* ============ ADMIN VIEWS ============ */
+function stuRows(){
+ return S.students.map(s=>{const p=S.progAll[s.id]||{},ps=progStats(p),rs=S.results.filter(r=>r.sid===s.id),tests=rs.filter(r=>r.kind!=='interview'),iv=rs.find(r=>r.kind==='interview');
+  return{s,apt:ps.pct,acc:ps.acc,coding:ps.coding,nTests:tests.length,avg:avg(tests.map(r=>r.pct)),iv:iv?iv.pct:null}}).sort((a,b)=>a.s.name.localeCompare(b.s.name));
+}
+function vAOver(){
+ const rows=stuRows(),tests=S.results.filter(r=>r.kind!=='interview');
+ const byBr={};rows.forEach(r=>{(byBr[r.s.branch]=byBr[r.s.branch]||[]).push(r)});
+ const top=[...rows].filter(r=>r.nTests).sort((a,b)=>b.avg-a.avg).slice(0,5);
+ return `<h1>Overview</h1><p class="sub">Live picture of your batch.</p>
+ <div class="stats"><div class="stat"><b>${rows.length}</b><span>Registered students</span></div><div class="stat"><b>${avg(rows.map(r=>r.apt))}%</b><span>Avg aptitude completion</span></div><div class="stat"><b>${tests.length?avg(tests.map(r=>r.pct))+'%':'–'}</b><span>Avg test score (${tests.length} attempts)</span></div><div class="stat"><b>${S.assess.length}</b><span>Assessments created</span></div></div>
+ <div class="grid2"><section class="card"><h3>Branch-wise average test score</h3>${Object.keys(byBr).length?Object.entries(byBr).map(([b,r])=>{const t=r.filter(x=>x.nTests),a=avg(t.map(x=>x.avg));return `<div class="row"><div style="min-width:90px"><b>${esc(b)}</b><small>${r.length} students</small></div><div style="flex:1">${bar(a)}</div><span class="pill">${t.length?a+'%':'–'}</span></div>`}).join(''):'<p class="muted">No students yet.</p>'}</section>
+ <section class="card"><h3>Top performers</h3>${top.length?top.map((r,i)=>`<div class="row" style="cursor:pointer" onclick="openStu('${r.s.id}')"><div class="num">${i+1}</div><div><b>${esc(r.s.name)}</b><small>${esc(r.s.branch)} · ${r.nTests} tests</small></div><span class="pill ok">${r.avg}%</span></div>`).join(''):'<p class="muted">No scores yet.</p>'}</section></div>
+ <div class="btnrow"><button class="btn" onclick="go('a_new')">+ Create assessment</button><button class="btn ghost" onclick="go('a_stud')">View all students</button></div>`;
+}
+function vAStud(){
+ const rows=stuRows();
+ return `<div class="between"><div><h1>Students</h1><p class="sub">Aptitude progress, coding, test averages and interview score for every student.</p></div><button class="btn ghost sm" onclick="exportCSV()">⬇ Export CSV</button></div>
+ <input class="search" placeholder="Search by name, roll or branch…" oninput="filterRows(this.value)" value="${esc(S.search)}">
+ <div class="tbl"><table id="stbl"><tr><th>Name</th><th>Roll</th><th>Branch</th><th>Aptitude done</th><th>Accuracy</th><th>Coding</th><th>Tests</th><th>Avg score</th><th>Interview</th></tr>
+ ${rows.map(r=>`<tr class="clk" data-t="${esc((r.s.name+' '+r.s.roll+' '+r.s.branch).toLowerCase())}" onclick="openStu('${r.s.id}')"><td><b>${esc(r.s.name)}</b></td><td>${esc(r.s.roll)}</td><td>${esc(r.s.branch)}</td><td><div class="mini">${bar(r.apt)}<span>${r.apt}%</span></div></td><td>${r.acc}%</td><td>${r.coding}/${CODING.length}</td><td>${r.nTests}</td><td>${r.nTests?`<span class="pill ${r.avg>=50?'ok':'bad'}">${r.avg}%</span>`:'–'}</td><td>${r.iv===null?'–':(r.iv/10)+'/10'}</td></tr>`).join('')}</table></div>${rows.length?'':'<p class="muted">No students have registered yet. Share this page with them.</p>'}`;
+}
+function filterRows(v){S.search=v;const q=v.toLowerCase();document.querySelectorAll('#stbl tr[data-t]').forEach(r=>r.style.display=r.dataset.t.includes(q)?'':'none')}
+function openStu(id){S.sub={stu:id};go('a_stu')}
+function vAStu(){
+ const s=S.students.find(x=>x.id===S.sub.stu);if(!s)return '<button class="back" onclick="go(\'a_stud\')">← Students</button><p>Student not found.</p>';
+ const p=S.progAll[s.id]||{},ps=progStats(p),rs=S.results.filter(r=>r.sid===s.id).sort((a,b)=>b.ts-a.ts);
+ return `<button class="back" onclick="go('a_stud')">← Students</button><h1>${esc(s.name)} <span class="pill">${esc(s.branch)}</span></h1><p class="sub">Roll ${esc(s.roll)} · joined ${fmtDate(s.created)}</p>
+ <div class="stats"><div class="stat"><b>${ps.pct}%</b><span>Aptitude completed</span>${bar(ps.pct)}</div><div class="stat"><b>${ps.acc}%</b><span>Aptitude accuracy</span>${bar(ps.acc,'var(--ok)')}</div><div class="stat"><b>${ps.coding}/${CODING.length}</b><span>Coding solved</span></div></div>
+ <section class="card"><h3>Test results</h3>${rs.length?`<div class="tbl"><table><tr><th>Test</th><th>Type</th><th>Score</th><th>%</th><th>Best</th><th>Attempts</th><th>Date</th></tr>${rs.map(r=>`<tr><td>${esc(r.title)}</td><td>${esc(r.kind)}</td><td>${r.score}/${r.total}</td><td>${r.pct}%</td><td>${r.best}%</td><td>${r.attempts}</td><td>${fmtDate(r.ts)}</td></tr>`).join('')}</table></div>`:'<p class="muted">No tests yet.</p>'}</section>
+ <section class="card"><h3>Aptitude by chapter</h3>${BOOKS.map(b=>b.chapters.map(c=>{const t=chState(c,p);return `<div class="row"><div><b>${esc(b.short)}: ${c.title}</b></div><div style="min-width:120px">${bar(Math.round(t.done/t.total*100))}</div><span class="pill ${t.complete?'ok':''}">${t.corr}/${t.total} correct</span></div>`}).join('')).join('')}</section>
+ ${(p.interviews||[]).length?`<section class="card"><h3>AI interviews</h3>${p.interviews.map(r=>`<div class="row"><div><b>${esc(r.label)}</b><small>${fmtDate(r.ts)} · ${esc(r.summary||'')}</small></div><span class="pill">${r.overall}/10</span></div>`).join('')}</section>`:''}`;
+}
+function vAAsm(){
+ return `<div class="between"><div><h1>Assessments</h1><p class="sub">Create a common assessment for all students, then track scores.</p></div><button class="btn" onclick="go('a_new')">+ New assessment</button></div>
+ ${S.assess.length?S.assess.map(a=>{const rs=S.results.filter(r=>r.key==='a_'+a.id);return `<section class="card"><div class="between"><div><h3>${esc(a.title)} ${a.active===false?'<span class="pill">Hidden</span>':'<span class="pill ok">Live</span>'}</h3><small class="muted">${a.qids.length} questions · ${a.mins} min · ${rs.length} students attempted${rs.length?` · average ${avg(rs.map(r=>r.pct))}%`:''}</small></div><div class="btnrow"><button class="btn sm ghost" onclick="S.rsel='a_${a.id}';go('a_res')">Results</button><button class="btn sm ghost" onclick="toggleAsm('${a.id}')">${a.active===false?'Publish':'Hide'}</button><button class="btn sm ghost danger" onclick="delAsm('${a.id}')">Delete</button></div></div></section>`}).join(''):'<section class="card"><p class="muted">No assessments yet. Create one from the question bank.</p></section>'}`;
+}
+async function toggleAsm(id){const a=S.assess.find(x=>x.id===id);try{await dSet('assessments',id,{...strip(a),active:a.active===false})}catch(e){toast('Could not update (admin access needed)')}}
+async function delAsm(id){if(!confirm('Delete this assessment? Existing scores stay in the results.'))return;try{await dDel('assessments',id)}catch(e){toast('Could not delete')}}
+function vANew(){
+ const groups={};Object.values(BANK).forEach(q=>{(groups[q.cat]=groups[q.cat]||[]).push(q)});
+ return `<button class="back" onclick="go('a_asm')">← Assessments</button><h1>Create assessment</h1>
+ <section class="card form"><label>Title<input id="nt" placeholder="e.g. Placement Screening Test 1"></label><label>Description (optional)<input id="nd" placeholder="Instructions shown to students"></label><label>Duration (minutes)<input id="nm" type="number" value="30" min="1"></label></section>
+ <h2>Choose questions <small class="muted" id="ncount">0 selected</small></h2>
+ ${CATS.filter(c=>groups[c]).map(c=>`<details class="card"><summary><b>${c}</b> <small class="muted">${groups[c].length} questions</small> <button class="btn sm ghost" onclick="event.preventDefault();selCat('${c.replace(/'/g,"\\'")}')">Select all</button></summary>${groups[c].map(q=>`<label class="chk"><input type="checkbox" class="qsel" data-c="${esc(c)}" value="${esc(q.id)}" onchange="cnt()"><span>${esc(q.q.slice(0,110))}${q.q.length>110?'…':''}<small class="muted"> ${esc(q.src||'')}</small></span></label>`).join('')}</details>`).join('')}
+ <div class="btnrow"><button class="btn" onclick="saveAsm()">Publish to students</button></div>`;
+}
+function cnt(){$('#ncount').textContent=document.querySelectorAll('.qsel:checked').length+' selected'}
+function selCat(c){document.querySelectorAll('.qsel').forEach(i=>{if(i.dataset.c===c)i.checked=true});cnt()}
+async function saveAsm(){
+ const title=$('#nt').value.trim(),mins=Math.max(1,parseInt($('#nm').value)||30),qids=[...document.querySelectorAll('.qsel:checked')].map(i=>i.value);
+ if(!title||!qids.length){toast('Add a title and pick at least one question');return}
+ try{await dSet('assessments','a'+Date.now().toString(36),{title,desc:$('#nd').value.trim(),mins,qids,active:true,created:Date.now()});toast('Assessment published');go('a_asm')}catch(e){toast('Could not publish. Admin (edit) access is needed.')}
+}
+function vABank(){
+ return `<h1>Question Bank</h1><p class="sub">Add your own questions (for example company-specific ones). They become available when creating assessments.</p>
+ <section class="card form"><label>Category<select id="bc">${CATS.map(c=>`<option ${c==='Custom'?'selected':''}>${c}</option>`).join('')}</select></label><label>Question<textarea id="bq" rows="2"></textarea></label>
+ ${[0,1,2,3].map(i=>`<label>Option ${String.fromCharCode(65+i)}<input class="bo"></label>`).join('')}
+ <label>Correct option<select id="ba"><option value="0">A</option><option value="1">B</option><option value="2">C</option><option value="3">D</option></select></label><label>Explanation (optional)<input id="be"></label><button class="btn" onclick="addQ()">Add question</button></section>
+ <h2>Your questions (${S.custom.length})</h2>${S.custom.length?S.custom.map(q=>`<div class="row"><div><b>${esc(q.q)}</b><small>${esc(q.cat)} · answer: ${esc(q.o[q.a])}</small></div><button class="btn sm ghost danger" onclick="delQ('${q.id}')">Delete</button></div>`).join(''):'<p class="muted">None yet. The built-in bank has '+Object.keys(BANK).filter(k=>!k.startsWith('c:')).length+' questions.</p>'}`;
+}
+async function addQ(){
+ const q=$('#bq').value.trim(),o=[...document.querySelectorAll('.bo')].map(i=>i.value.trim());
+ if(!q||o.some(x=>!x)){toast('Enter the question and all 4 options');return}
+ try{await dSet('questions','c'+Date.now().toString(36),{q,o,a:parseInt($('#ba').value),e:$('#be').value.trim(),cat:$('#bc').value,created:Date.now()});toast('Question added');$('#bq').value='';document.querySelectorAll('.bo').forEach(i=>i.value='');$('#be').value=''}catch(e){toast('Could not add (admin access needed)')}
+}
+async function delQ(id){if(confirm('Delete this question?'))try{await dDel('questions',id)}catch(e){toast('Could not delete')}}
+function vARes(){
+ const keys=[...new Map(S.results.filter(r=>r.kind!=='interview').map(r=>[r.key,r.title])).entries()];
+ S.assess.forEach(a=>{if(!keys.find(k=>k[0]==='a_'+a.id))keys.push(['a_'+a.id,a.title])});
+ keys.sort((a,b)=>(a[0].startsWith('a_')?0:1)-(b[0].startsWith('a_')?0:1));
+ if(!S.rsel&&keys.length)S.rsel=keys[0][0];
+ const rs=S.results.filter(r=>r.key===S.rsel).sort((a,b)=>b.pct-a.pct),ps=rs.map(r=>r.pct);
+ return `<div class="between"><div><h1>Results</h1><p class="sub">Score details for every student on a test.</p></div><button class="btn ghost sm" onclick="exportCSV(true)">⬇ Export CSV</button></div>
+ <label class="inl">Test <select onchange="S.rsel=this.value;paint()">${keys.map(k=>`<option value="${esc(k[0])}" ${k[0]===S.rsel?'selected':''}>${esc(k[1])}${k[0].startsWith('a_')?' (assigned)':''}</option>`).join('')}</select></label>
+ ${rs.length?`<div class="stats"><div class="stat"><b>${rs.length}</b><span>Students attempted</span></div><div class="stat"><b>${avg(ps)}%</b><span>Class average</span></div><div class="stat"><b>${Math.max(...ps)}%</b><span>Highest</span></div><div class="stat"><b>${Math.min(...ps)}%</b><span>Lowest</span></div><div class="stat"><b>${Math.round(ps.filter(p=>p>=50).length/ps.length*100)}%</b><span>Scored 50%+</span></div></div>
+ <div class="tbl"><table><tr><th>#</th><th>Student</th><th>Roll</th><th>Branch</th><th>Score</th><th>%</th><th>Best</th><th>Attempts</th><th>Date</th></tr>${rs.map((r,i)=>`<tr><td>${i+1}</td><td><b>${esc(r.name)}</b></td><td>${esc(r.roll||'')}</td><td>${esc(r.branch)}</td><td>${r.score}/${r.total}</td><td><span class="pill ${r.pct>=50?'ok':'bad'}">${r.pct}%</span></td><td>${r.best}%</td><td>${r.attempts}</td><td>${fmtDate(r.ts)}</td></tr>`).join('')}</table></div>`:'<section class="card"><p class="muted">No attempts on this test yet.</p></section>'}`;
+}
+async function exportCSV(resOnly){
+ const q=v=>`"${String(v??'').replace(/"/g,'""')}"`;let csv;
+ if(resOnly){csv='Test,Student,Roll,Branch,Score,Total,Percent,Best,Attempts,Date\n'+S.results.filter(r=>r.key===S.rsel).map(r=>[r.title,r.name,r.roll,r.branch,r.score,r.total,r.pct,r.best,r.attempts,fmtDate(r.ts)].map(q).join(',')).join('\n')}
+ else csv='Name,Roll,Branch,Aptitude done %,Accuracy %,Coding solved,Tests taken,Avg test %,Interview /10\n'+stuRows().map(r=>[r.s.name,r.s.roll,r.s.branch,r.apt,r.acc,r.coding,r.nTests,r.avg,r.iv===null?'':r.iv/10].map(q).join(',')).join('\n');
+ if(!S.dl){toast('Download is not available in this view');return}
+ try{await S.dl.save({filename:resOnly?'test-results.csv':'students-report.csv',data:csv})}catch(e){if(e.code!=='declined')toast('Could not save the file')}
+}
+
+const VIEWS={home:vHome,apt:vApt,book:vBook,chap:vChap,tech:vTech,soft:vSoft,code:vCode,prob:vProb,comp:vComp,assess:vAssess,test:vTest,iv:vIv,scores:vScores,a_over:vAOver,a_stud:vAStud,a_stu:vAStu,a_asm:vAAsm,a_new:vANew,a_bank:vABank,a_res:vARes};
+
+/* ============ CALCULATOR (no eval) ============ */
+function calcEval(s){s=s.replace(/×/g,'*').replace(/÷/g,'/').replace(/\s+/g,'');let i=0;
+ const num=()=>{const m=/^\d*\.?\d+/.exec(s.slice(i));if(!m)throw 0;i+=m[0].length;return parseFloat(m[0])};
+ const post=v=>{while(s[i]==='%'){i++;v/=100}return v};
+ const atom=()=>{if(s[i]==='('){i++;const v=expr();if(s[i]!==')')throw 0;i++;return post(v)}if(s[i]==='-'){i++;return -atom()}return post(num())};
+ const term=()=>{let v=atom();while(s[i]==='*'||s[i]==='/'){const o=s[i++],r=atom();v=o==='*'?v*r:v/r}return v};
+ const expr=()=>{let v=term();while(s[i]==='+'||s[i]==='-'){const o=s[i++],r=term();v=o==='+'?v+r:v-r}return v};
+ const v=expr();if(i!==s.length)throw 0;return v}
+function initCalc(){
+ const keys=['C','(',')','⌫','7','8','9','÷','4','5','6','×','1','2','3','-','0','.','%','+'];
+ $('#ckeys').innerHTML=keys.map(k=>`<button onclick="ck('${k}')">${k}</button>`).join('')+'<button class="eq" onclick="ck(\'=\')">=</button>';
+}
+function ck(k){const d=$('#cdisp');if(k==='C')d.value='';else if(k==='⌫')d.value=d.value.slice(0,-1);else if(k==='='){try{const v=calcEval(d.value);if(!isFinite(v))throw 0;d.value=String(Math.round(v*1e8)/1e8)}catch(e){d.value='Error'}}else{if(d.value==='Error')d.value='';d.value+=k}}
+function toggleCalc(){const c=$('#calc');c.hidden=!c.hidden}
+let started=false;const start=()=>{if(started)return;started=true;initCalc();boot()};
+document.addEventListener('DOMContentLoaded',start);
+if(document.readyState!=='loading')start();
+
+</script>
+</body>
+</html>
